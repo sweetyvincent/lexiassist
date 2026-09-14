@@ -15,6 +15,7 @@ const nextConfig = {
   basePath: process.env.GITHUB_PAGES === 'true' ? '/lexiassist' : '',
   assetPrefix: process.env.GITHUB_PAGES === 'true' ? '/lexiassist/' : '',
   output: process.env.GITHUB_PAGES === 'true' ? 'export' : undefined,
+  trailingSlash: process.env.GITHUB_PAGES === 'true' ? true : false,
   images: {
     unoptimized: true,
   },
