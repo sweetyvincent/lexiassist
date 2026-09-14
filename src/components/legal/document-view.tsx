@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { useDocument } from '@/hooks/use-document';
 import { useAnalysis } from '@/hooks/use-analysis';
@@ -19,6 +19,7 @@ export function DocumentView({ docId: initialDocId }: DocumentViewProps) {
   
   // On static export hostings like GitHub Pages, the URL path or localStorage can resolve dynamic document IDs
   const [activeDocId, setActiveDocId] = useState<string>(initialDocId);
+  const analyzedDocsRef = useRef<Set<string>>(new Set());
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -57,20 +58,36 @@ export function DocumentView({ docId: initialDocId }: DocumentViewProps) {
   }, [activeDocId, loadDocument]);
 
   useEffect(() => {
-    if (document?.extractedText && !analysis && !isAnalyzing) {
-      analyzeDocument(document.extractedText);
+    if (document?.extractedText && !analysis && !isAnalyzing && activeDocId) {
+      if (!analyzedDocsRef.current.has(activeDocId)) {
+        analyzedDocsRef.current.add(activeDocId);
+        analyzeDocument(document.extractedText);
+      }
     }
-  }, [document, analysis, isAnalyzing, analyzeDocument]);
+  }, [document?.extractedText, analysis, isAnalyzing, activeDocId, analyzeDocument]);
 
-  // Construct structured pages from chunks or fallback
-  const pages: ParsedPage[] = document?.chunks ? Array.from(new Set(document.chunks.map(c => c.pageNumber))).map(pageNum => {
-    const pageChunks = document.chunks.filter(c => c.pageNumber === pageNum);
-    return {
-      pageNumber: pageNum,
-      text: pageChunks.map(c => c.content).join('\n\n'),
-      textItems: []
-    };
-  }) : [];
+  // Construct structured pages from chunks or fallback with useMemo
+  const pages: ParsedPage[] = useMemo(() => {
+    if (!document?.chunks || document.chunks.length === 0) {
+      if (document?.extractedText) {
+        return [{
+          pageNumber: 1,
+          text: document.extractedText,
+          textItems: []
+        }];
+      }
+      return [];
+    }
+    const uniquePageNums = Array.from(new Set(document.chunks.map(c => c.pageNumber))).sort((a, b) => a - b);
+    return uniquePageNums.map(pageNum => {
+      const pageChunks = document.chunks.filter(c => c.pageNumber === pageNum);
+      return {
+        pageNumber: pageNum,
+        text: pageChunks.map(c => c.content).join('\n\n'),
+        textItems: []
+      };
+    });
+  }, [document]);
 
   if (isDocLoading) {
     return (

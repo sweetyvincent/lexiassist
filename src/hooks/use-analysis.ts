@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import type { RiskAnalysis } from '@/types/analysis';
 import type { ReadingLevel } from '@/types/analysis';
 import { FirestoreService } from '@/lib/firebase/firestore';
@@ -14,7 +14,7 @@ export function useAnalysis(documentId?: string) {
   const [readingLevel, setReadingLevelState] = useState<ReadingLevel>('standard');
   const [summary, setSummary] = useState<string>('');
 
-  const analyzeDocument = async (text: string): Promise<void> => {
+  const analyzeDocument = useCallback(async (text: string): Promise<void> => {
     if (!documentId) throw new Error('documentId required to analyze');
     try {
       setLoading(true);
@@ -95,9 +95,9 @@ export function useAnalysis(documentId?: string) {
     } finally {
       setLoading(false);
     }
-  };
+  }, [documentId]);
 
-  const loadAnalysis = async (docId: string): Promise<void> => {
+  const loadAnalysis = useCallback(async (docId: string): Promise<void> => {
     try {
       setLoading(true);
       setError(null);
@@ -113,9 +113,9 @@ export function useAnalysis(documentId?: string) {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  const refreshSummary = async (text: string, level: ReadingLevel): Promise<void> => {
+  const refreshSummary = useCallback(async (text: string, level: ReadingLevel): Promise<void> => {
     try {
       setLoading(true);
       setError(null);
@@ -132,11 +132,11 @@ export function useAnalysis(documentId?: string) {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  const setReadingLevel = (level: ReadingLevel) => {
+  const setReadingLevel = useCallback((level: ReadingLevel) => {
     setReadingLevelState(level);
-  };
+  }, []);
 
   return { analysis, loading, error, readingLevel, summary, analyzeDocument, loadAnalysis, setReadingLevel, refreshSummary };
 }

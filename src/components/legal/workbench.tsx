@@ -37,6 +37,16 @@ export function Workbench({ documentId, document, pages, analysis, isAnalyzing }
   const [readingLevel, setReadingLevel] = useState<ReadingLevel>('standard');
   const [mobileView, setMobileView] = useState<'document' | 'analysis'>('document');
   const [highlightedClauseId, setHighlightedClauseId] = useState<string | null>(null);
+  const [isDesktop, setIsDesktop] = useState(true);
+
+  React.useEffect(() => {
+    const handleResize = () => {
+      setIsDesktop(window.innerWidth >= 1024);
+    };
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   if (isAnalyzing) {
     return (
@@ -59,9 +69,9 @@ export function Workbench({ documentId, document, pages, analysis, isAnalyzing }
     if (!analysis) return 'Upload or inspect your document to view the automated plain-English summary.';
     if (level === 'plain') {
       return (
-        'PLAIN ENGLISH BREAKDOWN:\n\n' +
-        '1. What this agreement means: This is a commercial contract where you provide services under agreed project terms.\n' +
-        '2. Things to watch out for: The other party expects unlimited compensation (indemnity) if any dispute occurs, and either party can cancel on only 10 days notice.\n' +
+        'PLAIN-ENGLISH EXECUTIVE SUMMARY:\n\n' +
+        '1. What this agreement does: Sets up a professional consulting relationship under Delaware law.\n' +
+        '2. Top warning: You are agreeing to pay all damages and legal fees for the other company without any dollar limit.\n' +
         '3. Next recommendation: Request a financial liability limit before signing.'
       );
     }
@@ -78,8 +88,6 @@ export function Workbench({ documentId, document, pages, analysis, isAnalyzing }
 
   return (
     <div className="flex flex-col h-full w-full bg-slate-50/50 dark:bg-zinc-950/50">
-      <DisclaimerBanner />
-      
       {/* Mobile Tab Toggle */}
       <div className="lg:hidden flex p-2.5 border-b bg-background/80 backdrop-blur-md flex-shrink-0 gap-2">
         <Button 
@@ -102,12 +110,18 @@ export function Workbench({ documentId, document, pages, analysis, isAnalyzing }
         {/* Left Pane: Document Viewer */}
         <motion.div 
           className="h-full flex flex-col"
-          style={{ width: `${leftWidth}%` }}
+          style={isDesktop ? { width: `${leftWidth}%` } : undefined}
           initial={false}
-          animate={{ 
-            width: mobileView === 'document' ? '100%' : '0%', 
-            opacity: mobileView === 'document' ? 1 : 0 
-          }}
+          animate={
+            isDesktop
+              ? { width: `${leftWidth}%`, opacity: 1, display: 'flex' }
+              : {
+                  width: mobileView === 'document' ? '100%' : '0%',
+                  opacity: mobileView === 'document' ? 1 : 0,
+                  display: mobileView === 'document' ? 'flex' : 'none',
+                }
+          }
+          transition={{ duration: 0.2 }}
         >
           <div className="h-full p-3 lg:p-5 pr-lg-2">
             <div className="h-full border rounded-2xl bg-card shadow-sm overflow-hidden flex flex-col">
@@ -130,12 +144,18 @@ export function Workbench({ documentId, document, pages, analysis, isAnalyzing }
         {/* Right Pane: Multi-tab Legal Intelligence */}
         <motion.div 
           className="h-full flex flex-col"
-          style={{ width: `${100 - leftWidth}%` }}
+          style={isDesktop ? { width: `${100 - leftWidth}%` } : undefined}
           initial={false}
-          animate={{ 
-            width: mobileView === 'analysis' ? '100%' : '0%',
-            opacity: mobileView === 'analysis' ? 1 : 0
-          }}
+          animate={
+            isDesktop
+              ? { width: `${100 - leftWidth}%`, opacity: 1, display: 'flex' }
+              : {
+                  width: mobileView === 'analysis' ? '100%' : '0%',
+                  opacity: mobileView === 'analysis' ? 1 : 0,
+                  display: mobileView === 'analysis' ? 'flex' : 'none',
+                }
+          }
+          transition={{ duration: 0.2 }}
         >
           <div className="h-full p-3 lg:p-5 pl-lg-2 flex flex-col min-h-0">
             <Tabs value={activeTab} onValueChange={setActiveTab} className="flex flex-col h-full">

@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { LocalPDFParser } from '@/lib/pdf/parser';
 import { FirestoreService } from '@/lib/firebase/firestore';
 import type { LegalDocument } from '@/types/document';
@@ -13,7 +13,7 @@ export function useDocument(documentId?: string) {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<Error | null>(null);
 
-  const uploadDocument = async (file: File): Promise<string> => {
+  const uploadDocument = useCallback(async (file: File): Promise<string> => {
     try {
       setLoading(true);
       setError(null);
@@ -64,9 +64,9 @@ export function useDocument(documentId?: string) {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  const loadDocument = async (id: string): Promise<void> => {
+  const loadDocument = useCallback(async (id: string): Promise<void> => {
     try {
       setLoading(true);
       setError(null);
@@ -180,9 +180,9 @@ SECTION 12: GOVERNING LAW AND DISPUTES
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  const deleteDocument = async (id: string): Promise<void> => {
+  const deleteDocument = useCallback(async (id: string): Promise<void> => {
     try {
       setLoading(true);
       setError(null);
@@ -204,7 +204,7 @@ SECTION 12: GOVERNING LAW AND DISPUTES
     } finally {
       setLoading(false);
     }
-  };
+  }, [document]);
 
   return { document, loading, error, uploadDocument, loadDocument, deleteDocument };
 }
