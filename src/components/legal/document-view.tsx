@@ -104,8 +104,13 @@ export function DocumentView({ docId: initialDocId }: DocumentViewProps) {
         documents={document ? [{
           id: document.id,
           title: document.fileName,
-          status: document.status,
-          createdAt: new Date(document.uploadedAt).toLocaleDateString(),
+          status: document.status || 'ready',
+          createdAt: (() => {
+            try {
+              const d = new Date(document.uploadedAt);
+              return isNaN(d.getTime()) ? new Date().toLocaleDateString() : d.toLocaleDateString();
+            } catch { return new Date().toLocaleDateString(); }
+          })(),
         }] : []}
         activeDocumentId={activeDocId}
         onSelectDocument={(id) => router.push(`/document/${id}`)}

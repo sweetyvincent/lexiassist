@@ -84,7 +84,9 @@ export function useAnalysis(documentId?: string) {
 
       setAnalysis(parsedAnalysis);
       try {
-        await FirestoreService.saveAnalysis(documentId, parsedAnalysis);
+        const savePromise = FirestoreService.saveAnalysis(documentId, parsedAnalysis);
+        const saveTimeout = new Promise((_, reject) => setTimeout(() => reject(new Error('Firestore saveAnalysis timeout')), 2500));
+        await Promise.race([savePromise, saveTimeout]);
       } catch {
         // Continue if offline or demo
       }
@@ -99,12 +101,15 @@ export function useAnalysis(documentId?: string) {
     try {
       setLoading(true);
       setError(null);
-      const data = await FirestoreService.getAnalysis(docId);
+      const getPromise = FirestoreService.getAnalysis(docId);
+      const getTimeout = new Promise<null>((resolve) => setTimeout(() => resolve(null), 2500));
+      const data = await Promise.race([getPromise, getTimeout]);
       if (data) {
         setAnalysis(data);
       }
     } catch (err: any) {
-      setError(err instanceof Error ? err : new Error(String(err)));
+      // Silently continue — Firestore offline is expected on static hosting
+      console.warn('loadAnalysis failed:', err);
     } finally {
       setLoading(false);
     }

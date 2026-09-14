@@ -95,7 +95,7 @@ export function Sidebar({
                         <div className="flex flex-col overflow-hidden">
                           <span className="text-sm font-medium truncate">{doc.title}</span>
                           <div className="flex items-center gap-2 text-xs text-muted-foreground mt-1">
-                            <span>{new Date(doc.createdAt).toLocaleDateString()}</span>
+                            <span>{doc.createdAt}</span>
                             <span className="px-1.5 py-0.5 rounded-md bg-zinc-100 dark:bg-zinc-800">
                               {doc.status}
                             </span>
