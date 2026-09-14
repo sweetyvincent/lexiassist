@@ -1,7 +1,7 @@
 import { InputSanitizer } from '@/lib/security/input-sanitizer';
 import { geminiLegalService } from '@/lib/gemini/legal-service';
 
-export const dynamic = 'force-dynamic';
+export const dynamic = process.env.GITHUB_PAGES === 'true' ? 'auto' : 'force-dynamic';
 
 /**
  * POST handler for chat streaming

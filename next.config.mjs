@@ -12,6 +12,12 @@ const nextConfig = {
   typescript: {
     ignoreBuildErrors: false,
   },
+  basePath: process.env.GITHUB_PAGES === 'true' ? '/lexiassist' : '',
+  assetPrefix: process.env.GITHUB_PAGES === 'true' ? '/lexiassist/' : '',
+  output: process.env.GITHUB_PAGES === 'true' ? 'export' : undefined,
+  images: {
+    unoptimized: true,
+  },
   // Enable experimental features
   experimental: {
     serverComponentsExternalPackages: ['pdfjs-dist'],
