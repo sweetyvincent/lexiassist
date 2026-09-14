@@ -1,11 +1,13 @@
 'use client';
+
 import * as React from 'react';
 import { createContext, useContext, useEffect, useState } from 'react';
 import { signInWithGoogle, signInAsGuest, signOutUser, onAuthChange } from '@/lib/firebase/auth';
 import type { User } from 'firebase/auth';
+import { toast } from 'sonner';
 
 interface AuthState {
-  user: User | null;
+  user: User | any | null;
   loading: boolean;
   error: Error | null;
 }
@@ -21,7 +23,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 /**
  * Authentication Provider Component.
- * Wraps the app to provide auth state and methods via React Context.
+ * Wraps the app to provide robust auth state and methods via React Context.
  */
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [state, setState] = useState<AuthState>({
@@ -39,23 +41,39 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const handleSignInWithGoogle = async () => {
     try {
-      await signInWithGoogle();
+      setState((prev) => ({ ...prev, loading: true }));
+      const result = await signInWithGoogle();
+      if (result?.user) {
+        setState({ user: result.user, loading: false, error: null });
+        toast.success(`Welcome, ${result.user.displayName || 'Counsel'}! Signed in with Google.`);
+      }
     } catch (error) {
-      setState((prev) => ({ ...prev, error: error instanceof Error ? error : new Error(String(error)) }));
+      const err = error instanceof Error ? error : new Error(String(error));
+      setState((prev) => ({ ...prev, loading: false, error: err }));
+      toast.error('Sign in failed: ' + err.message);
     }
   };
 
   const handleSignInAsGuest = async () => {
     try {
-      await signInAsGuest();
+      setState((prev) => ({ ...prev, loading: true }));
+      const result = await signInAsGuest();
+      if (result?.user) {
+        setState({ user: result.user, loading: false, error: null });
+        toast.success('Signed in as Guest Legal Analyst.');
+      }
     } catch (error) {
-      setState((prev) => ({ ...prev, error: error instanceof Error ? error : new Error(String(error)) }));
+      const err = error instanceof Error ? error : new Error(String(error));
+      setState((prev) => ({ ...prev, loading: false, error: err }));
+      toast.error('Guest sign-in failed: ' + err.message);
     }
   };
 
   const handleSignOut = async () => {
     try {
       await signOutUser();
+      setState({ user: null, loading: false, error: null });
+      toast.info('Signed out successfully.');
     } catch (error) {
       setState((prev) => ({ ...prev, error: error instanceof Error ? error : new Error(String(error)) }));
     }

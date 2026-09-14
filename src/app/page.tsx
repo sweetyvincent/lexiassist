@@ -7,10 +7,25 @@ import { UploadZone } from '@/components/legal/upload-zone';
 import { Sidebar } from '@/components/layout/sidebar';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
-import { Scale, Shield, FileText, MessageSquare, Zap, Lock } from 'lucide-react';
+import { 
+  Scale, 
+  ShieldCheck, 
+  FileText, 
+  MessageSquare, 
+  Sparkles, 
+  Lock, 
+  ArrowRight,
+  CheckCircle2,
+  Zap,
+  BarChart3,
+  SearchCheck,
+  FileSearch
+} from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 
 export default function Home() {
-  const { isAuthenticated, signInWithGoogle, signInAsGuest } = useAuth();
+  const { user, isAuthenticated, signInWithGoogle, signInAsGuest } = useAuth();
   const router = useRouter();
   const { uploadDocument, loading: isUploading, error: uploadError } = useDocument();
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
@@ -30,62 +45,158 @@ export default function Home() {
 
   if (!isAuthenticated) {
     return (
-      <div className="flex flex-col min-h-[calc(100vh-4rem)] items-center justify-center p-8 bg-gradient-to-b from-background to-muted/20">
-        <div className="text-center max-w-3xl space-y-6 mb-16">
-          <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight">
-            AI-Powered Legal Document Analysis
-          </h1>
-          <p className="text-xl text-muted-foreground">
-            Upload, analyze, and understand complex legal documents with enterprise-grade AI. Get actionable insights, risk assessments, and attorney-ready briefings — all for free.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center pt-8">
-            <button
+      <div className="relative overflow-hidden min-h-[calc(100vh-4rem)] flex flex-col items-center justify-center p-6 md:p-12">
+        {/* Modern Ambient Gradient Background */}
+        <div className="absolute inset-0 -z-10 overflow-hidden pointer-events-none">
+          <div className="absolute -top-40 left-1/2 -translate-x-1/2 w-[900px] h-[500px] bg-gradient-to-tr from-blue-600/20 via-indigo-500/20 to-purple-500/10 blur-[130px] rounded-full" />
+          <div className="absolute top-1/2 -right-40 w-[600px] h-[400px] bg-gradient-to-br from-violet-500/15 to-transparent blur-[120px] rounded-full" />
+        </div>
+
+        {/* Hero Section */}
+        <div className="text-center max-w-4xl space-y-6 mb-16 pt-8">
+          <motion.div 
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="flex items-center justify-center gap-2"
+          >
+            <Badge variant="outline" className="px-3.5 py-1 text-xs font-semibold rounded-full border-blue-500/30 bg-blue-50/50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 gap-1.5 shadow-sm">
+              <Sparkles className="w-3.5 h-3.5" />
+              Powered by Google AI Studio Free Tier & Gemini 1.5 Flash
+            </Badge>
+          </motion.div>
+
+          <motion.h1 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className="text-4xl sm:text-6xl lg:text-7xl font-black tracking-tight text-foreground leading-[1.15]"
+          >
+            Smarter Contract Insights,{' '}
+            <span className="bg-gradient-to-r from-blue-600 via-indigo-600 to-violet-600 dark:from-blue-400 dark:via-indigo-400 dark:to-violet-400 bg-clip-text text-transparent">
+              Zero Legal Blindspots.
+            </span>
+          </motion.h1>
+
+          <motion.p 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed"
+          >
+            Upload commercial leases, employment contracts, and NDAs. Interrogate them with our split-screen workbench, uncover hidden liabilities, and export briefing sheets in seconds.
+          </motion.p>
+
+          {/* Call to Action Buttons */}
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+            className="flex flex-col sm:flex-row gap-4 justify-center items-center pt-4"
+          >
+            <Button
+              size="lg"
               onClick={signInWithGoogle}
-              className="px-8 py-3 bg-primary text-primary-foreground rounded-lg font-medium hover:bg-primary/90 transition-colors"
+              className="w-full sm:w-auto h-12 px-8 rounded-xl font-semibold shadow-lg shadow-blue-500/20 bg-blue-600 hover:bg-blue-700 text-white transition-all transform hover:-translate-y-0.5 gap-2.5"
             >
+              <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
+                <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" fill="#FBBC05"/>
+                <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" fill="#EA4335"/>
+              </svg>
               Get Started with Google
-            </button>
-            <button
+            </Button>
+
+            <Button
+              size="lg"
+              variant="outline"
               onClick={signInAsGuest}
-              className="px-8 py-3 bg-secondary text-secondary-foreground rounded-lg font-medium hover:bg-secondary/80 transition-colors"
+              className="w-full sm:w-auto h-12 px-8 rounded-xl font-semibold border-2 hover:bg-muted/60 transition-all gap-2"
             >
-              Try as Guest
-            </button>
+              Explore as Guest
+              <ArrowRight className="w-4 h-4 text-muted-foreground" />
+            </Button>
+          </motion.div>
+
+          <div className="flex items-center justify-center gap-6 pt-6 text-xs text-muted-foreground">
+            <span className="flex items-center gap-1.5"><CheckCircle2 className="w-4 h-4 text-emerald-500" /> Client-side PII Scrubbing</span>
+            <span className="flex items-center gap-1.5"><CheckCircle2 className="w-4 h-4 text-emerald-500" /> Free Forever</span>
+            <span className="flex items-center gap-1.5"><CheckCircle2 className="w-4 h-4 text-emerald-500" /> Local Storage</span>
           </div>
         </div>
 
+        {/* Feature Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl w-full">
           {[
-            { icon: Shield, title: 'Risk Analysis', desc: 'Identify high-risk clauses and potential issues' },
-            { icon: FileText, title: 'Smart Summaries', desc: 'Get plain-English summaries at any reading level' },
-            { icon: MessageSquare, title: 'Document Q&A', desc: 'Ask questions and get cited answers' },
-            { icon: Scale, title: 'Contract Comparison', desc: 'Compare documents side by side' },
-            { icon: Zap, title: 'Attorney Prep', desc: 'Generate briefing sheets and checklists' },
-            { icon: Lock, title: 'Privacy First', desc: 'PII redaction and local processing' },
+            { 
+              icon: ShieldCheck, 
+              title: 'Risk Radar & Heatmaps', 
+              desc: 'Identifies high-risk indemnification clauses, uncapped damages, and one-sided liabilities.',
+              badge: 'Visual Analytics' 
+            },
+            { 
+              icon: FileText, 
+              title: 'Triple-Tier Summaries', 
+              desc: 'Toggle between Plain English, Standard Business, and Detailed Legal breakdown in real-time.',
+              badge: 'Multi-Reading Level' 
+            },
+            { 
+              icon: MessageSquare, 
+              title: 'Cited Document Q&A', 
+              desc: 'Ask questions with exact paragraph and page citations highlighted automatically in the document.',
+              badge: 'RAG Powered' 
+            },
+            { 
+              icon: Scale, 
+              title: 'Side-by-Side Comparison', 
+              desc: 'Detects redline revisions, missing protections, and shifts in contract balance between two drafts.',
+              badge: 'Contract Diff' 
+            },
+            { 
+              icon: Zap, 
+              title: 'Attorney Preparation Sheet', 
+              desc: 'Export actionable Markdown or print-ready briefing summaries tailored for consultation with counsel.',
+              badge: 'Export Ready' 
+            },
+            { 
+              icon: Lock, 
+              title: 'Absolute Client Confidentiality', 
+              desc: 'Client-side PII redaction strips SSNs, phone numbers, and bank details before passing text to the LLM.',
+              badge: 'Privacy First' 
+            },
           ].map((feature, i) => (
             <motion.div
               key={feature.title}
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 25 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.1 }}
-              className="p-6 rounded-xl border bg-card text-card-foreground shadow-sm hover:shadow-md transition-shadow"
+              transition={{ delay: 0.15 + i * 0.08 }}
+              className="group relative p-7 rounded-2xl border bg-card/70 hover:bg-card hover:border-blue-500/40 hover:shadow-xl hover:shadow-blue-500/5 transition-all duration-300 flex flex-col justify-between"
             >
-              <feature.icon className="w-10 h-10 text-primary mb-4" />
-              <h3 className="text-lg font-semibold mb-2">{feature.title}</h3>
-              <p className="text-muted-foreground">{feature.desc}</p>
+              <div>
+                <div className="flex items-center justify-between mb-4">
+                  <div className="p-3 rounded-xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 group-hover:scale-105 transition-transform">
+                    <feature.icon className="w-6 h-6" />
+                  </div>
+                  <span className="text-[11px] font-semibold tracking-wider text-muted-foreground uppercase px-2.5 py-0.5 rounded-full bg-muted/60">
+                    {feature.badge}
+                  </span>
+                </div>
+                <h3 className="text-lg font-bold mb-2 tracking-tight">{feature.title}</h3>
+                <p className="text-sm text-muted-foreground leading-relaxed">{feature.desc}</p>
+              </div>
             </motion.div>
           ))}
         </div>
 
-        <p className="text-sm text-muted-foreground mt-16 text-center max-w-2xl">
-          Disclaimer: This tool provides AI-assisted analysis and should not replace professional legal counsel.
+        <p className="text-xs text-muted-foreground mt-16 text-center max-w-2xl border-t pt-6">
+          Legal Disclaimer: LexiAssist is an AI-powered legal intelligence system designed for informational analysis only. It does not provide formal legal counsel or replace a licensed attorney.
         </p>
       </div>
     );
   }
 
   return (
-    <div className="flex h-[calc(100vh-4rem)]">
+    <div className="flex h-[calc(100vh-4rem)] bg-background">
       <Sidebar 
         documents={[]}
         activeDocumentId={null}
@@ -95,21 +206,67 @@ export default function Home() {
         isCollapsed={isSidebarCollapsed}
         onToggleCollapse={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
       />
-      <main className="flex-1 p-8 overflow-y-auto">
-        <div className="max-w-4xl mx-auto space-y-8">
-          <h1 className="text-3xl font-bold">Dashboard</h1>
-          <UploadZone 
-            onFileAccepted={handleFileAccepted}
-            isUploading={isUploading}
-            error={uploadError?.message}
-          />
+      
+      <main className="flex-1 p-6 md:p-10 overflow-y-auto custom-scrollbar">
+        <div className="max-w-5xl mx-auto space-y-8">
+          {/* Header Banner */}
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b pb-6">
+            <div>
+              <h1 className="text-3xl font-extrabold tracking-tight">Legal Workbench Dashboard</h1>
+              <p className="text-sm text-muted-foreground mt-1">
+                Welcome back, {user?.displayName || 'Counsel'}. Upload a contract to begin automated clause risk assessment.
+              </p>
+            </div>
+
+            <Button 
+              variant="outline"
+              size="sm"
+              onClick={() => router.push('/document/demo')}
+              className="gap-2 rounded-xl font-medium border-blue-500/30 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950/30"
+            >
+              <FileSearch className="w-4 h-4" />
+              Open Sample Contract
+            </Button>
+          </div>
+
+          {/* Upload Area */}
+          <div className="space-y-4">
+            <h2 className="text-lg font-semibold tracking-tight">Upload Document for Analysis</h2>
+            <UploadZone 
+              onFileAccepted={handleFileAccepted}
+              isUploading={isUploading}
+              error={uploadError?.message}
+            />
+          </div>
           
-          <div className="mt-12">
-            <h2 className="text-xl font-semibold mb-4">Recent Documents</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              <div className="h-32 rounded-lg border bg-muted/50 animate-pulse" />
-              <div className="h-32 rounded-lg border bg-muted/50 animate-pulse" />
-              <div className="h-32 rounded-lg border bg-muted/50 animate-pulse" />
+          {/* Recent Documents Section */}
+          <div className="pt-4 space-y-4">
+            <h2 className="text-lg font-semibold tracking-tight">Sample & Recent Analyses</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+              <div 
+                onClick={() => router.push('/document/demo')}
+                className="p-5 rounded-2xl border bg-card hover:border-blue-500/40 hover:shadow-md cursor-pointer transition-all space-y-3 group"
+              >
+                <div className="flex items-center justify-between">
+                  <Badge variant="secondary" className="bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300">
+                    Elevated Risk (68/100)
+                  </Badge>
+                  <ArrowRight className="w-4 h-4 text-muted-foreground group-hover:translate-x-1 transition-transform" />
+                </div>
+                <h3 className="font-bold text-base group-hover:text-blue-600 transition-colors">Commercial Master Services Agreement.pdf</h3>
+                <p className="text-xs text-muted-foreground line-clamp-2">
+                  Contains uncapped indemnification, 10-day termination clause, and standard Delaware governing law.
+                </p>
+                <div className="text-[11px] text-muted-foreground pt-2 border-t flex justify-between">
+                  <span>8 Clauses</span>
+                  <span>Sample Document</span>
+                </div>
+              </div>
+
+              <div className="p-5 rounded-2xl border border-dashed flex flex-col items-center justify-center text-center text-muted-foreground gap-2 min-h-[160px]">
+                <FileText className="w-8 h-8 opacity-40" />
+                <span className="text-sm font-medium">Upload contracts above to review your private files</span>
+              </div>
             </div>
           </div>
         </div>

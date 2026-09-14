@@ -20,6 +20,7 @@ export interface PdfViewerProps {
   currentPage: number;
   onPageChange: (page: number) => void;
   highlightedClauses?: HighlightedClause[];
+  highlightedClauseId?: string | null;
   onClauseClick?: (clauseId: string) => void;
   className?: string;
 }
