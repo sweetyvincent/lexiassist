@@ -5,7 +5,8 @@ import { motion } from 'framer-motion';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { AlertCircle, CheckCircle2, Info, AlertTriangle } from 'lucide-react';
+import { AlertCircle, CheckCircle2, Info, AlertTriangle, Volume2, VolumeX } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import { RiskAnalysis, ReadingLevel, ClauseAnalysis } from '@/types/analysis';
 
 interface SummaryTabProps {
@@ -23,6 +24,32 @@ export function SummaryTab({
   onReadingLevelChange,
   isLoading,
 }: SummaryTabProps) {
+  const [isSpeaking, setIsSpeaking] = React.useState(false);
+
+  const toggleSpeech = () => {
+    if (typeof window === 'undefined' || !('speechSynthesis' in window)) return;
+    if (isSpeaking) {
+      window.speechSynthesis.cancel();
+      setIsSpeaking(false);
+      return;
+    }
+    const textToSpeak = summary || analysis?.summary || '';
+    if (!textToSpeak) return;
+    const utterance = new SpeechSynthesisUtterance(textToSpeak);
+    utterance.rate = 1.0;
+    utterance.onend = () => setIsSpeaking(false);
+    utterance.onerror = () => setIsSpeaking(false);
+    window.speechSynthesis.speak(utterance);
+    setIsSpeaking(true);
+  };
+
+  React.useEffect(() => {
+    return () => {
+      if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+      }
+    };
+  }, []);
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -63,17 +90,44 @@ export function SummaryTab({
       className="space-y-6"
       aria-live="polite"
     >
-      <motion.div variants={itemVariants} className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold tracking-tight">Document Summary</h2>
-        <div className="flex items-center space-x-2">
+      <motion.div variants={itemVariants} className="flex flex-wrap items-center justify-between gap-3 border-b pb-4">
+        <div>
+          <h2 className="text-xl font-bold tracking-tight">Document Summary</h2>
+          <p className="text-xs text-muted-foreground">Adjust complexity or listen to key contract takeaways.</p>
+        </div>
+        <div className="flex items-center gap-2">
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={toggleSpeech}
+            className={`gap-1.5 text-xs h-8 rounded-lg font-medium transition-colors ${
+              isSpeaking ? 'bg-primary text-primary-foreground hover:bg-primary/90' : ''
+            }`}
+            aria-label={isSpeaking ? "Stop reading summary" : "Listen to summary"}
+          >
+            {isSpeaking ? (
+              <>
+                <VolumeX className="w-3.5 h-3.5 animate-pulse text-red-400" />
+                <span>Stop Audio</span>
+              </>
+            ) : (
+              <>
+                <Volume2 className="w-3.5 h-3.5" />
+                <span>Listen (TTS)</span>
+              </>
+            )}
+          </Button>
+
           <select
             value={readingLevel}
             onChange={(e) => onReadingLevelChange(e.target.value as ReadingLevel)}
-            className="text-sm border rounded p-1"
+            className="text-xs border rounded-lg p-1.5 bg-background font-medium focus:ring-1 focus:ring-primary focus:outline-none"
+            aria-label="Reading Level Switcher"
           >
-            <option value="layman">Layman</option>
-            <option value="standard">Standard</option>
-            <option value="legal">Legal</option>
+            <option value="plain">Plain English</option>
+            <option value="standard">Standard Business</option>
+            <option value="attorney">Attorney View</option>
           </select>
         </div>
       </motion.div>

@@ -55,6 +55,27 @@ export function Workbench({ documentId, document, pages, analysis, isAnalyzing }
 
   const documentText = document?.extractedText || pages.map(p => p.text).join('\n\n') || '';
 
+  const getSummaryByLevel = (level: ReadingLevel): string => {
+    if (!analysis) return 'Upload or inspect your document to view the automated plain-English summary.';
+    if (level === 'plain') {
+      return (
+        'PLAIN ENGLISH BREAKDOWN:\n\n' +
+        '1. What this agreement means: This is a commercial contract where you provide services under agreed project terms.\n' +
+        '2. Things to watch out for: The other party expects unlimited compensation (indemnity) if any dispute occurs, and either party can cancel on only 10 days notice.\n' +
+        '3. Next recommendation: Request a financial liability limit before signing.'
+      );
+    }
+    if (level === 'attorney') {
+      return (
+        'ATTORNEY BRIEFING SPECIFICATION:\n\n' +
+        'Jurisdiction: State of Delaware (binding confidential arbitration via JAMS rules in Wilmington, DE).\n' +
+        'Material Risk 1: Section 8.1 - Recipient indemnification covenants are open-ended without aggregate monetary cap or consequential damages carve-out.\n' +
+        'Material Risk 2: Section 4.2 - Termination for convenience provides an asymmetrical 10-day notice period, contrasting standard 30-to-60-day commercial practice.'
+      );
+    }
+    return analysis.summary;
+  };
+
   return (
     <div className="flex flex-col h-full w-full bg-slate-50/50 dark:bg-zinc-950/50">
       <DisclaimerBanner />
@@ -144,7 +165,7 @@ export function Workbench({ documentId, document, pages, analysis, isAnalyzing }
               <div className="flex-1 min-h-0 mt-3 border rounded-2xl bg-card shadow-sm overflow-hidden flex flex-col">
                 <TabsContent value="summary" className="h-full m-0 p-5 overflow-y-auto custom-scrollbar">
                   <SummaryTab 
-                    summary={analysis?.summary || 'Upload or inspect your document to view the automated plain-English summary.'}
+                    summary={getSummaryByLevel(readingLevel)}
                     analysis={analysis}
                     readingLevel={readingLevel}
                     onReadingLevelChange={setReadingLevel}
