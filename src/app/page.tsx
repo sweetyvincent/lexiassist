@@ -31,7 +31,9 @@ export default function Home() {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
   const handleUploadSuccess = (docId: string) => {
-    router.push(`/document/${docId}`);
+    // For full static hosting compatibility on GitHub Pages, route to /document/demo?doc=${docId}
+    // where DocumentView dynamically loads the uploaded document from client storage
+    router.push(`/document/demo?doc=${docId}`);
   };
 
   const handleFileAccepted = async (file: File) => {

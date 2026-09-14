@@ -14,18 +14,47 @@ interface DocumentViewProps {
   docId: string;
 }
 
-export function DocumentView({ docId }: DocumentViewProps) {
+export function DocumentView({ docId: initialDocId }: DocumentViewProps) {
   const router = useRouter();
   
-  const { document, loading: isDocLoading, error: docError, loadDocument } = useDocument(docId);
-  const { analysis, analyzeDocument, loading: isAnalyzing } = useAnalysis(docId);
+  // On static export hostings like GitHub Pages, the URL path or localStorage can resolve dynamic document IDs
+  const [activeDocId, setActiveDocId] = useState<string>(initialDocId);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const pathParts = window.location.pathname.split('/').filter(Boolean);
+      // e.g. /lexiassist/document/uuid or /document/uuid
+      const docIndex = pathParts.indexOf('document');
+      if (docIndex !== -1 && pathParts[docIndex + 1]) {
+        const urlId = pathParts[docIndex + 1];
+        if (urlId && urlId !== activeDocId) {
+          setActiveDocId(urlId);
+          return;
+        }
+      }
+      // If still demo or generic, check if a document was just uploaded
+      if (initialDocId === 'demo') {
+        const lastUploaded = window.localStorage.getItem('lexiassist_last_uploaded_id');
+        const urlSearch = new URLSearchParams(window.location.search);
+        const queryDoc = urlSearch.get('doc');
+        if (queryDoc) {
+          setActiveDocId(queryDoc);
+        } else if (lastUploaded && window.location.hash.includes('uploaded')) {
+          setActiveDocId(lastUploaded);
+        }
+      }
+    }
+  }, [initialDocId, activeDocId]);
+
+  const { document, loading: isDocLoading, error: docError, loadDocument } = useDocument(activeDocId);
+  const { analysis, analyzeDocument, loading: isAnalyzing } = useAnalysis(activeDocId);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
   useEffect(() => {
-    if (docId) {
-      loadDocument(docId);
+    if (activeDocId) {
+      loadDocument(activeDocId);
     }
-  }, [docId, loadDocument]);
+  }, [activeDocId, loadDocument]);
 
   useEffect(() => {
     if (document?.extractedText && !analysis && !isAnalyzing) {
@@ -78,7 +107,7 @@ export function DocumentView({ docId }: DocumentViewProps) {
           status: document.status,
           createdAt: new Date(document.uploadedAt).toLocaleDateString(),
         }] : []}
-        activeDocumentId={docId}
+        activeDocumentId={activeDocId}
         onSelectDocument={(id) => router.push(`/document/${id}`)}
         onDeleteDocument={() => {}}
         onUploadClick={() => router.push('/')}
@@ -93,7 +122,7 @@ export function DocumentView({ docId }: DocumentViewProps) {
           className="flex-1 overflow-hidden"
         >
           <Workbench 
-            documentId={docId}
+            documentId={activeDocId}
             document={document}
             pages={pages}
             analysis={analysis}
