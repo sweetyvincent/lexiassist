@@ -65,15 +65,16 @@ export function RiskMatrixTab({ analysis, isLoading, onClauseClick }: RiskMatrix
   };
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6 pb-6">
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        className="h-[400px] w-full bg-card rounded-xl border p-4"
+        className="h-[320px] w-full bg-card rounded-xl border p-4 flex flex-col flex-shrink-0"
       >
-        <h3 className="text-lg font-semibold mb-4 text-center">Risk Categories</h3>
-        <ResponsiveContainer width="100%" height="100%">
-          <RadarChart cx="50%" cy="50%" outerRadius="80%" data={chartData}>
+        <h3 className="text-base font-semibold mb-2 text-center">Risk Categories</h3>
+        <div className="flex-1 min-h-0 w-full">
+          <ResponsiveContainer width="100%" height="100%">
+            <RadarChart cx="50%" cy="50%" outerRadius="75%" data={chartData}>
             <PolarGrid />
             <PolarAngleAxis dataKey="subject" tick={{ fontSize: 12 }} />
             <PolarRadiusAxis angle={30} domain={[0, 100]} />
@@ -94,6 +95,7 @@ export function RiskMatrixTab({ analysis, isLoading, onClauseClick }: RiskMatrix
             <Tooltip />
           </RadarChart>
         </ResponsiveContainer>
+        </div>
       </motion.div>
 
       <div>

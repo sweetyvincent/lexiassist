@@ -183,7 +183,7 @@ export function Workbench({ documentId, document, pages, analysis, isAnalyzing }
               </TabsList>
               
               <div className="flex-1 min-h-0 mt-3 border rounded-2xl bg-card shadow-sm overflow-hidden flex flex-col">
-                <TabsContent value="summary" className="h-full m-0 p-5 overflow-y-auto custom-scrollbar">
+                <TabsContent value="summary" className="flex-1 min-h-0 m-0 p-5 overflow-y-auto custom-scrollbar focus-visible:outline-none">
                   <SummaryTab 
                     summary={getSummaryByLevel(readingLevel)}
                     analysis={analysis}
@@ -193,7 +193,7 @@ export function Workbench({ documentId, document, pages, analysis, isAnalyzing }
                   />
                 </TabsContent>
 
-                <TabsContent value="risk" className="h-full m-0 p-5 overflow-y-auto custom-scrollbar">
+                <TabsContent value="risk" className="flex-1 min-h-0 m-0 p-5 overflow-y-auto custom-scrollbar focus-visible:outline-none">
                   <RiskMatrixTab 
                     analysis={analysis}
                     isLoading={false}
@@ -201,7 +201,7 @@ export function Workbench({ documentId, document, pages, analysis, isAnalyzing }
                   />
                 </TabsContent>
 
-                <TabsContent value="compare" className="h-full m-0 p-5 overflow-y-auto custom-scrollbar">
+                <TabsContent value="compare" className="flex-1 min-h-0 m-0 p-5 overflow-y-auto custom-scrollbar focus-visible:outline-none">
                   <ComparisonTab 
                     primaryAnalysis={analysis}
                     comparisonAnalysis={null}
@@ -210,14 +210,14 @@ export function Workbench({ documentId, document, pages, analysis, isAnalyzing }
                   />
                 </TabsContent>
 
-                <TabsContent value="chat" className="h-full m-0 p-5 flex flex-col min-h-0">
+                <TabsContent value="chat" className="flex-1 min-h-0 m-0 p-5 flex flex-col min-h-0 focus-visible:outline-none">
                   <ChatTab 
                     documentId={documentId}
                     documentText={documentText}
                   />
                 </TabsContent>
 
-                <TabsContent value="brief" className="h-full m-0 p-5 overflow-y-auto custom-scrollbar">
+                <TabsContent value="brief" className="flex-1 min-h-0 m-0 p-5 overflow-y-auto custom-scrollbar focus-visible:outline-none">
                   <BriefingTab 
                     analysis={analysis}
                     documentId={documentId}
