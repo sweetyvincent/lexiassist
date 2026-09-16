@@ -55,7 +55,7 @@ describe('RiskMatrixTab Component', () => {
 
   it('renders risk categories chart section and clause risks table', () => {
     render(<RiskMatrixTab analysis={mockAnalysis} isLoading={false} onClauseClick={() => {}} />);
-    expect(screen.getByText(/Risk Categories/i)).toBeInTheDocument();
+    expect(screen.getByText(/Risk Category/i)).toBeInTheDocument();
     expect(screen.getByText(/Clause Risks/i)).toBeInTheDocument();
     expect(screen.getByText(/Uncapped Liability/i)).toBeInTheDocument();
     expect(screen.getByText(/Late Payment Fee/i)).toBeInTheDocument();

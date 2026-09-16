@@ -4,12 +4,12 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 240 10% 3.9%;
+    --background: 210 40% 98%;
+    --foreground: 222.2 84% 4.9%;
     --card: 0 0% 100%;
-    --card-foreground: 240 10% 3.9%;
+    --card-foreground: 222.2 84% 4.9%;
     --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 3.9%;
+    --popover-foreground: 222.2 84% 4.9%;
     --primary: 221.2 83.2% 53.3%;
     --primary-foreground: 210 40% 98%;
     --secondary: 210 40% 96.1%;
@@ -23,7 +23,7 @@
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
     --ring: 221.2 83.2% 53.3%;
-    --radius: 0.75rem;
+    --radius: 0.85rem;
     --warning: 38 92% 50%;
     --warning-foreground: 48 96% 89%;
     --success: 142 76% 36%;
@@ -31,24 +31,24 @@
   }
 
   .dark {
-    --background: 240 10% 3.9%;
+    --background: 240 10% 4%;
     --foreground: 0 0% 98%;
-    --card: 240 10% 3.9%;
+    --card: 240 10% 6.5%;
     --card-foreground: 0 0% 98%;
-    --popover: 240 10% 3.9%;
+    --popover: 240 10% 6.5%;
     --popover-foreground: 0 0% 98%;
     --primary: 217.2 91.2% 59.8%;
     --primary-foreground: 222.2 47.4% 11.2%;
     --secondary: 217.2 32.6% 17.5%;
     --secondary-foreground: 210 40% 98%;
-    --muted: 217.2 32.6% 17.5%;
+    --muted: 217.2 32.6% 15.5%;
     --muted-foreground: 215 20.2% 65.1%;
     --accent: 217.2 32.6% 17.5%;
     --accent-foreground: 210 40% 98%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
+    --border: 240 6% 16.5%;
+    --input: 240 6% 16.5%;
     --ring: 224.3 76.3% 48%;
     --warning: 38 92% 50%;
     --warning-foreground: 48 96% 89%;
@@ -62,16 +62,94 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground antialiased selection:bg-primary/20 selection:text-primary;
   }
 }
 
-/* Glassmorphism utility */
-.glass {
-  @apply bg-white/80 dark:bg-zinc-950/80 backdrop-blur-xl;
+/* 3D Perspective & Spatial Utilities */
+.perspective-1000 {
+  perspective: 1000px;
 }
 
-/* Custom scrollbar */
+.preserve-3d {
+  transform-style: preserve-3d;
+}
+
+/* Professional 3D Card Hover Effects */
+.card-3d {
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease, border-color 0.3s ease;
+  transform-style: preserve-3d;
+}
+
+.card-3d:hover {
+  transform: translateY(-4px) rotateX(1.5deg) rotateY(-1.5deg) translateZ(8px);
+  box-shadow: 0 20px 35px -10px rgba(0, 0, 0, 0.12), 0 10px 15px -5px rgba(37, 99, 235, 0.08);
+}
+
+.dark .card-3d:hover {
+  box-shadow: 0 20px 35px -10px rgba(0, 0, 0, 0.6), 0 10px 20px -5px rgba(59, 130, 246, 0.2);
+}
+
+/* 3D Glassmorphism Panel */
+.glass-3d {
+  @apply bg-white/70 dark:bg-zinc-900/70 backdrop-blur-xl border border-white/40 dark:border-zinc-800/80;
+  box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.6);
+}
+
+.dark .glass-3d {
+  box-shadow: 0 10px 35px -5px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+/* Ambient Glow Utilities */
+.glow-primary {
+  box-shadow: 0 0 25px -5px rgba(37, 99, 235, 0.35);
+}
+
+.glow-destructive {
+  box-shadow: 0 0 25px -5px rgba(239, 68, 68, 0.35);
+}
+
+.glow-success {
+  box-shadow: 0 0 25px -5px rgba(16, 185, 129, 0.35);
+}
+
+/* Animated Gradient Border Overlay */
+.gradient-border-3d {
+  position: relative;
+  background-clip: padding-box;
+  border: 1.5px solid transparent;
+}
+
+.gradient-border-3d::before {
+  content: '';
+  position: absolute;
+  top: -1.5px; right: -1.5px; bottom: -1.5px; left: -1.5px;
+  z-index: -1;
+  border-radius: inherit;
+  background: linear-gradient(135deg, rgba(37, 99, 235, 0.6), rgba(168, 85, 247, 0.6), rgba(236, 72, 153, 0.6));
+  opacity: 0.7;
+  transition: opacity 0.3s ease;
+}
+
+.gradient-border-3d:hover::before {
+  opacity: 1;
+}
+
+/* Floating Animation Keyframe */
+@keyframes float3d {
+  0%, 100% {
+    transform: translateY(0px) rotateX(0deg);
+  }
+  50% {
+    transform: translateY(-6px) rotateX(2deg);
+  }
+}
+
+.animate-float-3d {
+  animation: float3d 4s ease-in-out infinite;
+}
+
+/* Custom Scrollbar */
 .custom-scrollbar::-webkit-scrollbar {
   width: 6px;
 }
@@ -79,10 +157,7 @@
   @apply bg-transparent;
 }
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  @apply bg-muted-foreground/20 rounded-full;
-}
-.custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  @apply bg-muted-foreground/40;
+  @apply bg-muted-foreground/25 rounded-full hover:bg-muted-foreground/45 transition-colors;
 }
 
 /* Print styles for attorney briefing export */

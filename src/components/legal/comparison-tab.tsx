@@ -4,7 +4,7 @@ import * as React from 'react';
 import { motion } from 'framer-motion';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
-import { UploadCloud, ArrowRight, AlertTriangle } from 'lucide-react';
+import { UploadCloud, ArrowRight, AlertTriangle, GitCompare } from 'lucide-react';
 import { RiskAnalysis, RiskCategory } from '@/types/analysis';
 
 interface ComparisonTabProps {
@@ -90,21 +90,21 @@ export function ComparisonTab({
 
   if (!activeComparison) {
     return (
-      <div className="flex flex-col items-center justify-center py-12 text-center space-y-4 border-2 border-dashed rounded-xl bg-muted/10 p-6">
-        <div className="p-4 rounded-full bg-primary/10 text-primary">
+      <div className="flex flex-col items-center justify-center py-12 text-center space-y-4 border-2 border-dashed rounded-2xl bg-muted/10 p-6 card-3d glass-3d">
+        <div className="p-4 rounded-full bg-primary/10 text-primary glow-primary animate-float-3d">
           <UploadCloud className="w-8 h-8" />
         </div>
         <div className="space-y-2">
-          <h3 className="text-lg font-semibold">Contract & Policy Comparison</h3>
+          <h3 className="text-lg font-bold">Contract & Policy Comparison</h3>
           <p className="text-sm text-muted-foreground max-w-md mx-auto">
             Compare your document against standard industry baselines or alternative revisions to uncover risk gaps, missing protections, and clause deviations.
           </p>
         </div>
         <div className="flex flex-wrap gap-3 justify-center pt-2">
-          <Button onClick={handleLoadBenchmark} variant="default" className="shadow-sm">
+          <Button onClick={handleLoadBenchmark} variant="default" className="shadow-md glow-primary transform hover:-translate-y-0.5 active:translate-y-0">
             Load Standard Benchmark Comparison
           </Button>
-          <Button onClick={onUploadComparison || handleLoadBenchmark} variant="outline">
+          <Button onClick={onUploadComparison || handleLoadBenchmark} variant="outline" className="shadow-sm">
             Upload Second Document
           </Button>
         </div>
@@ -128,46 +128,49 @@ export function ComparisonTab({
     <motion.div
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      className="space-y-6"
+      className="space-y-6 perspective-1000"
     >
       <div className="flex flex-wrap items-center justify-between gap-3 border-b pb-4">
         <div>
-          <h2 className="text-xl font-bold tracking-tight">Contract Comparison & Variance Analysis</h2>
+          <h2 className="text-xl font-bold tracking-tight flex items-center gap-2">
+            <GitCompare className="w-5 h-5 text-primary" />
+            <span>Contract Comparison & Variance Analysis</span>
+          </h2>
           <p className="text-xs text-muted-foreground">Side-by-side risk score delta and missing protection detection.</p>
         </div>
         <div className="flex items-center space-x-2 text-xs font-medium">
-          <span className="px-2.5 py-1 bg-primary/10 text-primary rounded-md border border-primary/20">
+          <span className="px-2.5 py-1 bg-primary/10 text-primary rounded-md border border-primary/20 shadow-sm">
             Document A (Current: {scoreA}/100)
           </span>
           <ArrowRight className="w-4 h-4 text-muted-foreground" />
-          <span className="px-2.5 py-1 bg-muted text-muted-foreground rounded-md border">
+          <span className="px-2.5 py-1 bg-muted text-muted-foreground rounded-md border shadow-sm">
             Document B ({activeComparison.documentId === 'benchmark-standard-v1' ? 'Standard Baseline' : 'Version B'}: {scoreB}/100)
           </span>
         </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="p-4 border rounded-xl bg-card shadow-sm">
+        <div className="p-4 border rounded-2xl bg-card card-3d shadow-sm glass-3d">
           <h4 className="text-xs font-semibold text-muted-foreground uppercase">Risk Delta</h4>
-          <p className={`text-2xl font-bold mt-1 ${totalDelta > 0 ? 'text-destructive' : 'text-emerald-500'}`}>
+          <p className={`text-2xl font-bold mt-1 ${totalDelta > 0 ? 'text-destructive glow-destructive' : 'text-emerald-500 glow-success'}`}>
             {totalDelta > 0 ? `+${totalDelta} Higher Risk` : `${totalDelta} Lower Risk`}
           </p>
           <p className="text-xs text-muted-foreground mt-1">Compared to standard baseline terms</p>
         </div>
-        <div className="p-4 border rounded-xl bg-card shadow-sm">
+        <div className="p-4 border rounded-2xl bg-card card-3d shadow-sm glass-3d">
           <h4 className="text-xs font-semibold text-muted-foreground uppercase">Missing Key Protections</h4>
           <p className="text-2xl font-bold mt-1 text-amber-500">2 Clauses</p>
           <p className="text-xs text-muted-foreground mt-1">Indemnification & IP Assignment</p>
         </div>
-        <div className="p-4 border rounded-xl bg-card shadow-sm">
+        <div className="p-4 border rounded-2xl bg-card card-3d shadow-sm glass-3d">
           <h4 className="text-xs font-semibold text-muted-foreground uppercase">Negotiation Stance</h4>
           <p className="text-2xl font-bold mt-1 text-primary">Revision Required</p>
           <p className="text-xs text-muted-foreground mt-1">Request mutual liability caps</p>
         </div>
       </div>
 
-      <div className="border rounded-xl overflow-hidden shadow-sm">
-        <div className="bg-muted/50 px-4 py-3 border-b font-medium text-sm">
+      <div className="border rounded-2xl overflow-hidden shadow-sm card-3d">
+        <div className="bg-muted/50 px-4 py-3 border-b font-semibold text-sm">
           Category Risk Matrix Comparison
         </div>
         <table className="w-full text-sm text-left">
@@ -192,11 +195,11 @@ export function ComparisonTab({
                   <td className="px-4 py-3 text-muted-foreground">{valB}/100</td>
                   <td className="px-4 py-3">
                     <span
-                      className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold ${
+                      className={`inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-semibold ${
                         delta > 0
-                          ? 'bg-red-50 text-red-700 dark:bg-red-950/40 dark:text-red-300'
+                          ? 'bg-red-500/10 text-red-700 dark:text-red-300 border border-red-500/20'
                           : delta < 0
-                          ? 'bg-green-50 text-green-700 dark:bg-green-950/40 dark:text-green-300'
+                          ? 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border border-emerald-500/20'
                           : 'bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300'
                       }`}
                     >
@@ -210,7 +213,7 @@ export function ComparisonTab({
         </table>
       </div>
 
-      <div className="bg-amber-500/10 border border-amber-500/20 rounded-xl p-4 space-y-2">
+      <div className="bg-amber-500/10 border border-amber-500/30 rounded-2xl p-4 space-y-2 card-3d">
         <h3 className="flex items-center text-sm font-semibold text-amber-700 dark:text-amber-400">
           <AlertTriangle className="w-4 h-4 mr-2" />
           Critical Discrepancies & Inconsistencies Detected
@@ -222,7 +225,7 @@ export function ComparisonTab({
       </div>
 
       <div className="flex justify-end">
-        <Button variant="outline" size="sm" onClick={() => setInternalComparison(null)}>
+        <Button variant="outline" size="sm" onClick={() => setInternalComparison(null)} className="rounded-xl">
           Reset Comparison View
         </Button>
       </div>
