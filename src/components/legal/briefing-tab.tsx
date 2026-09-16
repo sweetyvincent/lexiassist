@@ -114,8 +114,8 @@ export function BriefingTab({ analysis, documentId, isLoading }: BriefingTabProp
               </tr>
             </thead>
             <tbody className="divide-y">
-              {analysis?.clauses?.filter((c: any) => c.riskLevel !== 'low').map((clause: any) => (
-                <tr key={clause.id} className="bg-card">
+              {analysis?.clauses?.filter((c: any) => c.riskLevel !== 'low').map((clause: any, index: number) => (
+                <tr key={clause.clauseId || clause.id || index} className="bg-card">
                   <td className="px-4 py-3 font-medium">{clause.title}</td>
                   <td className="px-4 py-3">
                     <span className={`text-xs font-semibold px-2 py-1 rounded ${

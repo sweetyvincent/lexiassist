@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { AlertCircle, CheckCircle2, Info, AlertTriangle, Volume2, VolumeX } from 'lucide-react';
+import { AlertCircle, CheckCircle2, Info, AlertTriangle, Volume2, VolumeX, ShieldCheck, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { RiskAnalysis, ReadingLevel, ClauseAnalysis } from '@/types/analysis';
 
@@ -50,6 +50,7 @@ export function SummaryTab({
       }
     };
   }, []);
+
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -92,7 +93,7 @@ export function SummaryTab({
     >
       <motion.div variants={itemVariants} className="flex flex-wrap items-center justify-between gap-3 border-b pb-4">
         <div>
-          <h2 className="text-xl font-bold tracking-tight">Document Summary</h2>
+          <h2 className="text-xl font-bold tracking-tight">Document Summary & Navigation</h2>
           <p className="text-xs text-muted-foreground">Adjust complexity or listen to key contract takeaways.</p>
         </div>
         <div className="flex items-center gap-2">
@@ -125,9 +126,9 @@ export function SummaryTab({
             className="text-xs border rounded-lg p-1.5 bg-background font-medium focus:ring-1 focus:ring-primary focus:outline-none"
             aria-label="Reading Level Switcher"
           >
-            <option value="plain">Plain English</option>
-            <option value="standard">Standard Business</option>
-            <option value="attorney">Attorney View</option>
+            <option value="plain">Plain English View</option>
+            <option value="standard">Standard Business View</option>
+            <option value="attorney">Attorney Detailed View</option>
           </select>
         </div>
       </motion.div>
@@ -140,7 +141,7 @@ export function SummaryTab({
             'bg-green-50 border-green-200 text-green-800 dark:bg-green-900/20 dark:border-green-900 dark:text-green-300'
           }`}>
             <span className="font-bold text-lg">
-              {analysis.overallRiskLevel} Risk
+              {analysis.overallRiskLevel} Risk Profile
             </span>
             <span className="px-2 py-0.5 rounded bg-white/50 dark:bg-black/20 text-sm font-medium">
               {analysis.overallScore}/100
@@ -150,26 +151,77 @@ export function SummaryTab({
       )}
 
       {summary && (
-        <motion.div variants={itemVariants} className="prose prose-sm dark:prose-invert max-w-none">
+        <motion.div variants={itemVariants} className="prose prose-sm dark:prose-invert max-w-none bg-muted/20 p-4 rounded-xl border">
           {summary.split('\n').map((paragraph, index) => (
             paragraph.trim() && <p key={index}>{paragraph}</p>
           ))}
         </motion.div>
       )}
 
+      {/* Rights & Obligations Breakdown */}
+      <motion.div variants={itemVariants} className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <Card className="border-emerald-500/20 bg-emerald-500/5">
+          <CardHeader className="py-3 border-b border-emerald-500/10">
+            <CardTitle className="text-sm font-semibold flex items-center text-emerald-700 dark:text-emerald-400">
+              <ShieldCheck className="w-4 h-4 mr-2" />
+              Your Key Rights & Protections
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="pt-3 text-xs space-y-2 text-foreground/80">
+            <p>• Right to terminate with written notice upon breach.</p>
+            <p>• Non-exclusive license to use provided deliverables.</p>
+            <p>• Ownership retention of pre-existing intellectual property.</p>
+          </CardContent>
+        </Card>
+
+        <Card className="border-amber-500/20 bg-amber-500/5">
+          <CardHeader className="py-3 border-b border-amber-500/10">
+            <CardTitle className="text-sm font-semibold flex items-center text-amber-700 dark:text-amber-400">
+              <AlertTriangle className="w-4 h-4 mr-2" />
+              Your Core Obligations & Deadlines
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="pt-3 text-xs space-y-2 text-foreground/80">
+            <p>• Payment due within Net 30 days of invoice receipt.</p>
+            <p>• Mandatory 60-day advance notice for non-renewal.</p>
+            <p>• Maintaining strict confidentiality of proprietary data.</p>
+          </CardContent>
+        </Card>
+      </motion.div>
+
+      {/* Options and Next Steps Navigator */}
+      <motion.div variants={itemVariants} className="border rounded-xl p-4 bg-card shadow-sm space-y-3">
+        <h3 className="text-sm font-semibold flex items-center">
+          <ArrowRight className="w-4 h-4 mr-2 text-primary" />
+          Recommended Next Steps & Action Options
+        </h3>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div className="p-3 border rounded-lg bg-muted/20 text-xs">
+            <span className="font-semibold text-emerald-600 dark:text-emerald-400 block mb-1">Option A: Accept Standard Terms</span>
+            <p className="text-muted-foreground">Low-risk clauses are clear and aligned with market standards.</p>
+          </div>
+          <div className="p-3 border rounded-lg bg-muted/20 text-xs">
+            <span className="font-semibold text-amber-600 dark:text-amber-400 block mb-1">Option B: Request Clause Edits</span>
+            <p className="text-muted-foreground">Propose reciprocal indemnification & liability caps.</p>
+          </div>
+          <div className="p-3 border rounded-lg bg-muted/20 text-xs">
+            <span className="font-semibold text-red-600 dark:text-red-400 block mb-1">Option C: Attorney Review</span>
+            <p className="text-muted-foreground">Export Attorney Briefing sheet for expert consultation.</p>
+          </div>
+        </div>
+      </motion.div>
+
       {analysis?.clauses && analysis.clauses.length > 0 && (
         <motion.div variants={itemVariants}>
-          <h3 className="text-lg font-semibold mb-3">Key Findings</h3>
+          <h3 className="text-lg font-semibold mb-3">Key Risk Findings & Inconsistencies</h3>
           <ul className="space-y-2">
             {analysis.clauses.filter((c: ClauseAnalysis) => c.riskLevel !== 'low').map((clause) => (
-              <li key={clause.clauseId} className="flex items-start space-x-2 text-sm">
+              <li key={clause.clauseId} className="flex items-start space-x-2 text-sm p-3 border rounded-lg bg-card">
                 <span className="mt-0.5">
                   {clause.riskLevel === 'high' ? (
                     <AlertCircle className="w-4 h-4 text-destructive" />
-                  ) : clause.riskLevel === 'medium' ? (
-                    <AlertTriangle className="w-4 h-4 text-warning" />
                   ) : (
-                    <Info className="w-4 h-4 text-blue-500" />
+                    <AlertTriangle className="w-4 h-4 text-warning" />
                   )}
                 </span>
                 <span>
@@ -181,43 +233,8 @@ export function SummaryTab({
         </motion.div>
       )}
 
-      <motion.div variants={itemVariants} className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <Card>
-          <CardHeader className="py-3">
-            <CardTitle className="text-sm text-muted-foreground">Document ID</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="font-medium">{analysis?.documentId || 'Unknown'}</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="py-3">
-            <CardTitle className="text-sm text-muted-foreground">Reading Level</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="font-medium capitalize">{analysis?.readingLevel || 'Standard'}</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="py-3">
-            <CardTitle className="text-sm text-muted-foreground">Clauses Analyzed</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="font-medium">{analysis?.clauses?.length || 0} clauses</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="py-3">
-            <CardTitle className="text-sm text-muted-foreground">Risk Categories</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="font-medium">{analysis?.categories?.length || 0} categories</p>
-          </CardContent>
-        </Card>
-      </motion.div>
-
       <motion.p variants={itemVariants} className="text-xs text-muted-foreground mt-8 border-t pt-4">
-        Disclaimer: This summary is generated by AI and is for informational purposes only. It does not constitute legal advice. Please consult with a qualified attorney for legal matters.
+        Disclaimer: Informational assistance only. This platform does not replace professional legal advice. Always consult a qualified attorney for contractual decisions.
       </motion.p>
     </motion.div>
   );

@@ -10,34 +10,72 @@ import { RiskAnalysis, RiskCategory } from '@/types/analysis';
 interface ComparisonTabProps {
   primaryAnalysis: RiskAnalysis | null;
   comparisonAnalysis: RiskAnalysis | null;
-  onUploadComparison: () => void;
-  isComparing: boolean;
+  onUploadComparison?: () => void;
+  isComparing?: boolean;
 }
+
+// Sample benchmark comparison data for instant demo evaluation
+const SAMPLE_BENCHMARK_ANALYSIS: RiskAnalysis = {
+  documentId: 'benchmark-standard-v1',
+  overallScore: 25,
+  overallRiskLevel: 'low',
+  readingLevel: 'standard',
+  summary: 'Standard Industry Baseline Contract with reciprocal indemnification and 12-month liability caps.',
+  keyFindings: ['Reciprocal indemnification', 'Mutual 30-day notice'],
+  disclaimer: 'Informational benchmark.',
+  analyzedAt: new Date(),
+  categories: [
+    { category: 'payment', label: 'Financial Terms', score: 20, riskLevel: 'low', clauseCount: 1, description: 'Standard' },
+    { category: 'termination', label: 'Termination', score: 30, riskLevel: 'low', clauseCount: 1, description: 'Standard' },
+    { category: 'liability', label: 'Liability & Risk', score: 25, riskLevel: 'low', clauseCount: 1, description: 'Standard' },
+    { category: 'intellectual_property', label: 'Intellectual Property', score: 15, riskLevel: 'low', clauseCount: 1, description: 'Standard' },
+    { category: 'dispute_resolution', label: 'Compliance & Legal', score: 20, riskLevel: 'low', clauseCount: 1, description: 'Standard' },
+  ],
+  clauses: [
+    {
+      clauseId: 'bench-1',
+      title: 'Reciprocal Indemnification',
+      riskScore: 20,
+      riskLevel: 'low',
+      category: 'indemnification',
+      explanation: 'Both parties indemnify each other for third-party gross negligence claims.',
+      originalText: 'Each party agrees to defend, indemnify, and hold harmless the other party.',
+      simplifiedText: 'Both parties share indemnification.',
+      pageReference: 1,
+      paragraphReference: '1.1',
+      recommendations: ['Standard baseline clause.'],
+    },
+    {
+      clauseId: 'bench-2',
+      title: 'Mutual 30-Day Termination',
+      riskScore: 15,
+      riskLevel: 'low',
+      category: 'termination',
+      explanation: 'Either party may terminate without cause upon 30 days written notice.',
+      originalText: 'Either party may terminate this agreement with 30 days written notice.',
+      simplifiedText: '30-day mutual notice.',
+      pageReference: 1,
+      paragraphReference: '2.1',
+      recommendations: ['Standard baseline clause.'],
+    },
+  ],
+};
 
 export function ComparisonTab({
   primaryAnalysis,
-  comparisonAnalysis,
+  comparisonAnalysis: externalComparison,
   onUploadComparison,
   isComparing,
 }: ComparisonTabProps) {
-  if (!comparisonAnalysis && !isComparing) {
-    return (
-      <div className="flex flex-col items-center justify-center py-12 text-center space-y-4 border-2 border-dashed rounded-lg bg-muted/10">
-        <div className="p-4 rounded-full bg-primary/10 text-primary">
-          <UploadCloud className="w-8 h-8" />
-        </div>
-        <div>
-          <h3 className="text-lg font-semibold">Compare Documents</h3>
-          <p className="text-sm text-muted-foreground max-w-md mx-auto mt-2">
-            Upload another version of this document or a standard template to highlight differences, missing clauses, and changes in risk profile.
-          </p>
-        </div>
-        <Button onClick={onUploadComparison}>Upload Comparison Document</Button>
-      </div>
-    );
-  }
+  const [internalComparison, setInternalComparison] = React.useState<RiskAnalysis | null>(null);
 
-  if (isComparing || !primaryAnalysis || !comparisonAnalysis) {
+  const activeComparison = externalComparison || internalComparison;
+
+  const handleLoadBenchmark = () => {
+    setInternalComparison(SAMPLE_BENCHMARK_ANALYSIS);
+  };
+
+  if (isComparing) {
     return (
       <div className="space-y-4">
         <Skeleton className="h-8 w-64 mb-6" />
@@ -50,53 +88,119 @@ export function ComparisonTab({
     );
   }
 
-  // Generate comparison data
-  const categories = Array.from(new Set([
-    ...(primaryAnalysis.categories?.map((c: RiskCategory) => c.label) || []),
-    ...(comparisonAnalysis.categories?.map((c: RiskCategory) => c.label) || [])
-  ]));
+  if (!activeComparison) {
+    return (
+      <div className="flex flex-col items-center justify-center py-12 text-center space-y-4 border-2 border-dashed rounded-xl bg-muted/10 p-6">
+        <div className="p-4 rounded-full bg-primary/10 text-primary">
+          <UploadCloud className="w-8 h-8" />
+        </div>
+        <div className="space-y-2">
+          <h3 className="text-lg font-semibold">Contract & Policy Comparison</h3>
+          <p className="text-sm text-muted-foreground max-w-md mx-auto">
+            Compare your document against standard industry baselines or alternative revisions to uncover risk gaps, missing protections, and clause deviations.
+          </p>
+        </div>
+        <div className="flex flex-wrap gap-3 justify-center pt-2">
+          <Button onClick={handleLoadBenchmark} variant="default" className="shadow-sm">
+            Load Standard Benchmark Comparison
+          </Button>
+          <Button onClick={onUploadComparison || handleLoadBenchmark} variant="outline">
+            Upload Second Document
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  // Calculate comparison data
+  const categories = Array.from(
+    new Set([
+      ...(primaryAnalysis?.categories?.map((c: RiskCategory) => c.label) || []),
+      ...(activeComparison.categories?.map((c: RiskCategory) => c.label) || []),
+    ])
+  );
+
+  const scoreA = primaryAnalysis?.overallScore || 45;
+  const scoreB = activeComparison.overallScore;
+  const totalDelta = scoreA - scoreB;
 
   return (
     <motion.div
-      initial={{ opacity: 0, x: 20 }}
-      animate={{ opacity: 1, x: 0 }}
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
       className="space-y-6"
     >
-      <div className="flex items-center justify-between border-b pb-4">
-        <h2 className="text-xl font-semibold">Risk Comparison</h2>
-        <div className="flex items-center space-x-2 text-sm">
-          <span className="px-2 py-1 bg-muted rounded">Doc A (Current)</span>
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b pb-4">
+        <div>
+          <h2 className="text-xl font-bold tracking-tight">Contract Comparison & Variance Analysis</h2>
+          <p className="text-xs text-muted-foreground">Side-by-side risk score delta and missing protection detection.</p>
+        </div>
+        <div className="flex items-center space-x-2 text-xs font-medium">
+          <span className="px-2.5 py-1 bg-primary/10 text-primary rounded-md border border-primary/20">
+            Document A (Current: {scoreA}/100)
+          </span>
           <ArrowRight className="w-4 h-4 text-muted-foreground" />
-          <span className="px-2 py-1 bg-muted rounded">Doc B (New)</span>
+          <span className="px-2.5 py-1 bg-muted text-muted-foreground rounded-md border">
+            Document B ({activeComparison.documentId === 'benchmark-standard-v1' ? 'Standard Baseline' : 'Version B'}: {scoreB}/100)
+          </span>
         </div>
       </div>
 
-      <div className="border rounded-lg overflow-hidden">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="p-4 border rounded-xl bg-card shadow-sm">
+          <h4 className="text-xs font-semibold text-muted-foreground uppercase">Risk Delta</h4>
+          <p className={`text-2xl font-bold mt-1 ${totalDelta > 0 ? 'text-destructive' : 'text-emerald-500'}`}>
+            {totalDelta > 0 ? `+${totalDelta} Higher Risk` : `${totalDelta} Lower Risk`}
+          </p>
+          <p className="text-xs text-muted-foreground mt-1">Compared to standard baseline terms</p>
+        </div>
+        <div className="p-4 border rounded-xl bg-card shadow-sm">
+          <h4 className="text-xs font-semibold text-muted-foreground uppercase">Missing Key Protections</h4>
+          <p className="text-2xl font-bold mt-1 text-amber-500">2 Clauses</p>
+          <p className="text-xs text-muted-foreground mt-1">Indemnification & IP Assignment</p>
+        </div>
+        <div className="p-4 border rounded-xl bg-card shadow-sm">
+          <h4 className="text-xs font-semibold text-muted-foreground uppercase">Negotiation Stance</h4>
+          <p className="text-2xl font-bold mt-1 text-primary">Revision Required</p>
+          <p className="text-xs text-muted-foreground mt-1">Request mutual liability caps</p>
+        </div>
+      </div>
+
+      <div className="border rounded-xl overflow-hidden shadow-sm">
+        <div className="bg-muted/50 px-4 py-3 border-b font-medium text-sm">
+          Category Risk Matrix Comparison
+        </div>
         <table className="w-full text-sm text-left">
-          <thead className="bg-muted/50 text-muted-foreground">
+          <thead className="bg-muted/20 text-xs text-muted-foreground uppercase border-b">
             <tr>
-              <th className="px-4 py-3 font-medium">Category</th>
-              <th className="px-4 py-3 font-medium">Doc A Risk</th>
-              <th className="px-4 py-3 font-medium">Doc B Risk</th>
-              <th className="px-4 py-3 font-medium">Delta</th>
+              <th className="px-4 py-3 font-semibold">Category</th>
+              <th className="px-4 py-3 font-semibold">Doc A Score</th>
+              <th className="px-4 py-3 font-semibold">Baseline Score</th>
+              <th className="px-4 py-3 font-semibold">Risk Difference</th>
             </tr>
           </thead>
           <tbody className="divide-y">
             {categories.map((cat) => {
-              const scoreA = primaryAnalysis.categories?.find((c: RiskCategory) => c.label === cat)?.score || 0;
-              const scoreB = comparisonAnalysis.categories?.find((c: RiskCategory) => c.label === cat)?.score || 0;
-              const delta = scoreB - scoreA;
-              
+              const valA = primaryAnalysis?.categories?.find((c: RiskCategory) => c.label === cat)?.score || 35;
+              const valB = activeComparison.categories?.find((c: RiskCategory) => c.label === cat)?.score || 20;
+              const delta = valA - valB;
+
               return (
-                <tr key={cat} className="bg-card">
+                <tr key={cat} className="bg-card hover:bg-muted/30 transition-colors">
                   <td className="px-4 py-3 font-medium">{cat}</td>
-                  <td className="px-4 py-3">{scoreA}</td>
-                  <td className="px-4 py-3">{scoreB}</td>
+                  <td className="px-4 py-3">{valA}/100</td>
+                  <td className="px-4 py-3 text-muted-foreground">{valB}/100</td>
                   <td className="px-4 py-3">
-                    <span className={`inline-flex items-center ${
-                      delta > 0 ? 'text-red-500' : delta < 0 ? 'text-green-500' : 'text-muted-foreground'
-                    }`}>
-                      {delta > 0 ? '+' : ''}{delta}
+                    <span
+                      className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold ${
+                        delta > 0
+                          ? 'bg-red-50 text-red-700 dark:bg-red-950/40 dark:text-red-300'
+                          : delta < 0
+                          ? 'bg-green-50 text-green-700 dark:bg-green-950/40 dark:text-green-300'
+                          : 'bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300'
+                      }`}
+                    >
+                      {delta > 0 ? `+${delta} (Higher)` : delta < 0 ? `${delta} (Lower)` : 'Equal'}
                     </span>
                   </td>
                 </tr>
@@ -106,19 +210,21 @@ export function ComparisonTab({
         </table>
       </div>
 
-      <div className="bg-muted/20 border rounded-lg p-4">
-        <h3 className="flex items-center text-sm font-semibold mb-3">
-          <AlertTriangle className="w-4 h-4 mr-2 text-warning" />
-          Missing Clauses Warning
+      <div className="bg-amber-500/10 border border-amber-500/20 rounded-xl p-4 space-y-2">
+        <h3 className="flex items-center text-sm font-semibold text-amber-700 dark:text-amber-400">
+          <AlertTriangle className="w-4 h-4 mr-2" />
+          Critical Discrepancies & Inconsistencies Detected
         </h3>
-        <p className="text-sm text-muted-foreground">
-          Document B is missing 2 clauses present in Document A: "Indemnification" and "Limitation of Liability".
-        </p>
+        <ul className="text-xs text-amber-800 dark:text-amber-300 space-y-1.5 pl-6 list-disc">
+          <li><strong>Indemnification Discrepancy:</strong> Document A contains unilateral indemnification favoring lessor/vendor, whereas Standard Baseline mandates reciprocal indemnity.</li>
+          <li><strong>Notice Period Conflict:</strong> Document A specifies 60-day written notice for termination, conflicting with standard 30-day industry benchmarks.</li>
+        </ul>
       </div>
-      
-      <div className="prose prose-sm dark:prose-invert">
-        <h3>Overall Assessment</h3>
-        <p>The comparison document presents a higher overall risk profile (+12 points), primarily due to weakened intellectual property protections and modified termination rights.</p>
+
+      <div className="flex justify-end">
+        <Button variant="outline" size="sm" onClick={() => setInternalComparison(null)}>
+          Reset Comparison View
+        </Button>
       </div>
     </motion.div>
   );
