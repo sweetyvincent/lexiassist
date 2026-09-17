@@ -58,8 +58,8 @@ describe('SummaryTab Component', () => {
       />
     );
 
-    expect(screen.getByText(/Document Summary & Navigation/i)).toBeInTheDocument();
-    expect(screen.getByText(/medium Risk Profile/i)).toBeInTheDocument();
+    expect(screen.getByText(/Document Summary/i)).toBeInTheDocument();
+    expect(screen.getByText(/MEDIUM Risk Profile/i)).toBeInTheDocument();
     expect(screen.getByText(/65\/100/i)).toBeInTheDocument();
     expect(screen.getByText(/This is a simplified plain english contract summary/i)).toBeInTheDocument();
   });

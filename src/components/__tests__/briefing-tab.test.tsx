@@ -35,25 +35,25 @@ describe('BriefingTab Component', () => {
   it('renders initial Generate Briefing prompt', () => {
     render(<BriefingTab analysis={mockAnalysis} documentId="doc-123" isLoading={false} />);
     expect(screen.getByText(/Attorney Preparation Briefing/i)).toBeInTheDocument();
-    expect(screen.getByText(/Generate Briefing/i)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Generate Full Briefing/i })).toBeInTheDocument();
   });
 
   it('renders briefing document sections when generated', () => {
     render(<BriefingTab analysis={mockAnalysis} documentId="doc-123" isLoading={false} />);
 
-    const generateBtn = screen.getByText(/Generate Briefing/i);
+    const generateBtn = screen.getByRole('button', { name: /Generate Full Briefing/i });
     fireEvent.click(generateBtn);
 
     expect(screen.getByRole('heading', { name: /Attorney Briefing/i })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: /Executive Summary/i })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: /Key Risks for Review/i })).toBeInTheDocument();
-    expect(screen.getByRole('heading', { name: /Action Items Checklist/i })).toBeInTheDocument();
-    expect(screen.getByRole('heading', { name: /Questions for Attorney/i })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /Contract Obligation & Deadline Checklist/i })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /Questions Prepared for Legal Counsel/i })).toBeInTheDocument();
   });
 
   it('allows checking checklist items', () => {
     render(<BriefingTab analysis={mockAnalysis} documentId="doc-123" isLoading={false} />);
-    fireEvent.click(screen.getByText(/Generate Briefing/i));
+    fireEvent.click(screen.getByRole('button', { name: /Generate Full Briefing/i }));
 
     const checkbox = screen.getByText(/Review indemnification carve-outs/i);
     fireEvent.click(checkbox);

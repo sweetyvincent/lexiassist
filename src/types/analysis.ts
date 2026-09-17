@@ -52,6 +52,8 @@ export interface ClauseAnalysis {
   paragraphReference: string;
   /** Actionable recommendations based on the clause */
   recommendations: string[];
+  /** Suggested fairer counter-clause wording for negotiation */
+  counterProposalText?: string;
   /** Optional glossary terms identified in the clause */
   legalGlossaryTerms?: string[];
 }
@@ -98,6 +100,14 @@ export interface RiskAnalysis {
   disclaimer: string;
   /** Timestamp when the analysis was performed */
   analyzedAt: Date;
+  /** Flesch-Kincaid Grade Level before simplification */
+  readabilityScoreBefore?: number;
+  /** Flesch-Kincaid Grade Level after plain English simplification */
+  readabilityScoreAfter?: number;
+  /** Applicable governing jurisdiction */
+  jurisdiction?: string;
+  /** AI extraction confidence score percentage (0-100) */
+  confidenceScore?: number;
 }
 
 /**

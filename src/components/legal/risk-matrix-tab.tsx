@@ -192,6 +192,33 @@ export function RiskMatrixTab({ analysis, isLoading, onClauseClick }: RiskMatrix
                           </ul>
                         </div>
                       )}
+
+                      <div className="p-3 bg-gradient-to-r from-primary/10 via-accent/10 to-primary/5 border border-primary/20 rounded-xl space-y-2">
+                        <div className="flex items-center justify-between">
+                          <span className="font-bold text-[11px] text-primary flex items-center gap-1.5">
+                            <Sparkles className="w-3.5 h-3.5" />
+                            Negotiation Counter-Clause Assistant
+                          </span>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="h-7 text-[11px] px-2.5 rounded-lg border-primary/30 hover:bg-primary/10"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              const textToCopy = clause.counterProposalText || 
+                                `Proposed Balanced Revision: Neither party shall be liable for indirect or consequential damages. Total cumulative liability under this section shall be capped at fees paid in the prior 12-month period.`;
+                              navigator.clipboard.writeText(textToCopy);
+                            }}
+                          >
+                            Copy Fairer Wording
+                          </Button>
+                        </div>
+                        <p className="font-mono text-[11px] text-foreground/90 leading-relaxed bg-background/60 p-2 rounded-lg border border-primary/10">
+                          {clause.counterProposalText || 
+                            `Proposed Balanced Revision: Neither party shall be liable for indirect or consequential damages. Total cumulative liability under this section shall be capped at fees paid in the prior 12-month period.`}
+                        </p>
+                      </div>
+
                       <div>
                         <h4 className="font-bold text-[10px] text-muted-foreground uppercase tracking-wider mb-1">Original Text</h4>
                         <p className="font-mono text-[11px] p-2.5 bg-muted/80 rounded-lg border leading-relaxed">{clause.originalText}</p>
