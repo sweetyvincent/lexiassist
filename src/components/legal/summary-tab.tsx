@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { AlertCircle, CheckCircle2, Info, AlertTriangle, Volume2, VolumeX, ShieldCheck, ArrowRight, Sparkles } from 'lucide-react';
+import { AlertCircle, CheckCircle2, Info, AlertTriangle, Volume2, VolumeX, ShieldCheck, ArrowRight, Sparkles, BookOpen } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { RiskAnalysis, ReadingLevel, ClauseAnalysis } from '@/types/analysis';
 
@@ -16,6 +16,13 @@ interface SummaryTabProps {
   onReadingLevelChange: (level: ReadingLevel) => void;
   isLoading: boolean;
 }
+
+const LEGAL_GLOSSARY_ITEMS = [
+  { term: 'Indemnification', plainMeaning: 'Promise to pay for the other party’s losses or legal costs if a third party sues them.' },
+  { term: 'Limitation of Liability', plainMeaning: 'Cap on the maximum monetary damages a party can be forced to pay under the contract.' },
+  { term: 'Termination for Convenience', plainMeaning: 'Right to end the contract early without needing to prove a breach or legal fault.' },
+  { term: 'Governing Law & Venue', plainMeaning: 'Determines which state’s laws apply and which court handles any formal legal disputes.' },
+];
 
 export function SummaryTab({
   summary,
@@ -192,7 +199,7 @@ export function SummaryTab({
         </Card>
       </motion.div>
 
-      {/* Options and Next Steps Navigator with 3D depth */}
+      {/* Options and Next Steps Navigator */}
       <motion.div variants={itemVariants} className="border rounded-xl p-4 bg-card shadow-sm card-3d glass-3d space-y-3">
         <h3 className="text-sm font-semibold flex items-center">
           <ArrowRight className="w-4 h-4 mr-2 text-primary" />
@@ -211,6 +218,22 @@ export function SummaryTab({
             <span className="font-semibold text-red-600 dark:text-red-400 block mb-1">Option C: Attorney Review</span>
             <p className="text-muted-foreground">Export Attorney Briefing sheet for expert consultation.</p>
           </div>
+        </div>
+      </motion.div>
+
+      {/* Plain English Legal Term Glossary */}
+      <motion.div variants={itemVariants} className="border rounded-xl p-4 bg-card shadow-sm card-3d glass-3d space-y-3">
+        <h3 className="text-sm font-semibold flex items-center text-primary">
+          <BookOpen className="w-4 h-4 mr-2" />
+          Plain English Legal Glossary & Term Explanations
+        </h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          {LEGAL_GLOSSARY_ITEMS.map((g, i) => (
+            <div key={i} className="p-3 border rounded-lg bg-muted/20 text-xs">
+              <span className="font-bold text-foreground block mb-0.5">{g.term}</span>
+              <p className="text-muted-foreground leading-relaxed">{g.plainMeaning}</p>
+            </div>
+          ))}
         </div>
       </motion.div>
 

@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import dynamic from 'next/dynamic';
 import { motion } from 'framer-motion';
 import { 
   FileText, 
@@ -12,7 +13,6 @@ import {
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
-import { PdfViewer } from './pdf-viewer';
 import { DisclaimerBanner } from './disclaimer-banner';
 import { SummaryTab } from './summary-tab';
 import { RiskMatrixTab } from './risk-matrix-tab';
@@ -21,6 +21,19 @@ import { ChatTab } from './chat-tab';
 import { BriefingTab } from './briefing-tab';
 import { LegalDocument, ParsedPage } from '@/types/document';
 import { RiskAnalysis, ReadingLevel } from '@/types/analysis';
+
+// Dynamic import of PDF viewer for optimal code-splitting and zero initial bundle overhead
+const PdfViewer = dynamic(
+  () => import('./pdf-viewer').then((mod) => mod.PdfViewer),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="flex h-full w-full items-center justify-center bg-muted/20 p-8">
+        <Skeleton className="h-full w-full rounded-xl" />
+      </div>
+    ),
+  }
+);
 
 export interface WorkbenchProps {
   documentId: string;
@@ -63,57 +76,47 @@ export function Workbench({ documentId, document, pages, analysis, isAnalyzing }
     );
   }
 
-  const documentText = document?.extractedText || pages.map(p => p.text).join('\n\n') || '';
+  const documentText = pages.map(p => p.text).join('\n\n');
 
-  const getSummaryByLevel = (level: ReadingLevel): string => {
-    if (!analysis) return 'Upload or inspect your document to view the automated plain-English summary.';
-    if (level === 'plain') {
-      return (
-        'PLAIN-ENGLISH EXECUTIVE SUMMARY:\n\n' +
-        '1. What this agreement does: Sets up a professional consulting relationship under Delaware law.\n' +
-        '2. Top warning: You are agreeing to pay all damages and legal fees for the other company without any dollar limit.\n' +
-        '3. Next recommendation: Request a financial liability limit before signing.'
-      );
+  const getSummaryByLevel = (level: ReadingLevel) => {
+    if (!analysis) return null;
+    switch (level) {
+      case 'plain':
+        return analysis.summary ? `Plain English Summary:\n${analysis.summary}` : 'Simplifying legal terms into plain English for easy reading.';
+      case 'attorney':
+        return analysis.summary ? `Detailed Attorney Breakdown:\n${analysis.summary}\n\nKey Findings:\n${analysis.keyFindings.join('\n')}` : 'Detailed legal findings and clause citations.';
+      case 'standard':
+      default:
+        return analysis.summary;
     }
-    if (level === 'attorney') {
-      return (
-        'ATTORNEY BRIEFING SPECIFICATION:\n\n' +
-        'Jurisdiction: State of Delaware (binding confidential arbitration via JAMS rules in Wilmington, DE).\n' +
-        'Material Risk 1: Section 8.1 - Recipient indemnification covenants are open-ended without aggregate monetary cap or consequential damages carve-out.\n' +
-        'Material Risk 2: Section 4.2 - Termination for convenience provides an asymmetrical 10-day notice period, contrasting standard 30-to-60-day commercial practice.'
-      );
-    }
-    return analysis.summary;
   };
 
   return (
     <div className="flex flex-col h-full w-full bg-slate-50/50 dark:bg-zinc-950/50">
-      {/* Mobile Tab Toggle */}
+      {/* Mobile view switcher controls */}
       <div className="lg:hidden flex p-2.5 border-b bg-background/80 backdrop-blur-md flex-shrink-0 gap-2">
-        <Button 
-          variant={mobileView === 'document' ? 'default' : 'outline'} 
-          className="flex-1 h-10 rounded-xl font-medium shadow-sm transition-all"
+        <Button
+          variant={mobileView === 'document' ? 'default' : 'outline'}
           onClick={() => setMobileView('document')}
+          className="flex-1 h-10 rounded-xl font-medium shadow-sm transition-all"
         >
           <FileText className="w-4 h-4 mr-2" /> Document View
         </Button>
-        <Button 
-          variant={mobileView === 'analysis' ? 'default' : 'outline'} 
-          className="flex-1 h-10 rounded-xl font-medium shadow-sm transition-all"
+        <Button
+          variant={mobileView === 'analysis' ? 'default' : 'outline'}
           onClick={() => setMobileView('analysis')}
+          className="flex-1 h-10 rounded-xl font-medium shadow-sm transition-all"
         >
           <Shield className="w-4 h-4 mr-2" /> AI Analysis
         </Button>
       </div>
 
       <div className="flex flex-1 overflow-hidden relative min-h-0">
-        {/* Left Pane: Document Viewer */}
+        {/* Left Pane: PDF / Document Viewer */}
         <motion.div 
           className="h-full flex flex-col"
-          style={isDesktop ? { width: `${leftWidth}%` } : undefined}
-          initial={false}
-          animate={
-            isDesktop
+          style={
+            isDesktop 
               ? { width: `${leftWidth}%`, opacity: 1, display: 'flex' }
               : {
                   width: mobileView === 'document' ? '100%' : '0%',
@@ -135,18 +138,38 @@ export function Workbench({ documentId, document, pages, analysis, isAnalyzing }
           </div>
         </motion.div>
 
-        {/* Vertical Panel Divider */}
-        <div 
-          className="hidden lg:block w-1.5 hover:w-2 bg-border/60 hover:bg-primary/80 cursor-col-resize transition-all duration-200 z-10 h-full flex-shrink-0 select-none"
-          title="Drag to resize panels"
-        />
+        {/* Resizable Divider (Desktop only) */}
+        {isDesktop && (
+          <div 
+            className="w-1.5 hover:w-2 bg-border/60 hover:bg-primary/80 cursor-col-resize transition-all duration-200 z-10 h-full flex-shrink-0 select-none"
+            onMouseDown={(e) => {
+              const startX = e.clientX;
+              const startLeftWidth = leftWidth;
+              
+              const handleMouseMove = (moveEvent: MouseEvent) => {
+                const containerWidth = window.innerWidth;
+                const deltaX = moveEvent.clientX - startX;
+                const deltaPercent = (deltaX / containerWidth) * 100;
+                const newWidth = Math.min(Math.max(startLeftWidth + deltaPercent, 25), 75);
+                setLeftWidth(newWidth);
+              };
 
-        {/* Right Pane: Multi-tab Legal Intelligence */}
+              const handleMouseUp = () => {
+                window.removeEventListener('mousemove', handleMouseMove);
+                window.removeEventListener('mouseup', handleMouseUp);
+              };
+
+              window.addEventListener('mousemove', handleMouseMove);
+              window.addEventListener('mouseup', handleMouseUp);
+            }}
+            title="Drag to resize panels"
+          />
+        )}
+
+        {/* Right Pane: Intelligence & Analysis Workbench */}
         <motion.div 
           className="h-full flex flex-col"
-          style={isDesktop ? { width: `${100 - leftWidth}%` } : undefined}
-          initial={false}
-          animate={
+          style={
             isDesktop
               ? { width: `${100 - leftWidth}%`, opacity: 1, display: 'flex' }
               : {

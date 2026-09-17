@@ -5,9 +5,13 @@ import { Workbench } from '@/components/legal/workbench';
 import type { LegalDocument, ParsedPage } from '@/types/document';
 import type { RiskAnalysis } from '@/types/analysis';
 
-// Mock pdf-viewer to keep component test clean
-vi.mock('@/components/legal/pdf-viewer', () => ({
-  PdfViewer: () => <div data-testid="pdf-viewer">PDF Document Viewer</div>,
+// Mock next/dynamic to render dynamic components synchronously in Vitest
+vi.mock('next/dynamic', () => ({
+  default: () => {
+    return function DynamicComponent() {
+      return <div data-testid="pdf-viewer">PDF Document Viewer</div>;
+    };
+  },
 }));
 
 const mockDoc: LegalDocument = {

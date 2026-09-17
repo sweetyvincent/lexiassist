@@ -1,11 +1,18 @@
 import type { Metadata } from 'next';
 import localFont from 'next/font/local';
+import { Plus_Jakarta_Sans } from 'next/font/google';
 import './globals.css';
 import { ThemeProvider } from '@/providers/theme-provider';
 import { AuthProvider } from '@/providers/auth-provider';
 import { Navbar } from '@/components/layout/navbar';
 import { Footer } from '@/components/layout/footer';
 import { Toaster } from 'sonner';
+
+const plusJakartaSans = Plus_Jakarta_Sans({
+  subsets: ['latin'],
+  variable: '--font-display',
+  weight: ['400', '500', '600', '700', '800'],
+});
 
 const geistSans = localFont({
   src: './fonts/GeistVF.woff',
@@ -30,7 +37,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col bg-background text-foreground`}>
+      <body className={`${plusJakartaSans.variable} ${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col bg-background text-foreground font-sans`}>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"

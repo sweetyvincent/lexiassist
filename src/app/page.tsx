@@ -17,12 +17,12 @@ import {
   ArrowRight,
   CheckCircle2,
   Zap,
-  BarChart3,
-  SearchCheck,
   FileSearch
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Hero3DCanvas } from '@/components/ui/hero-3d-canvas';
+import { Card3DTilt } from '@/components/ui/card-3d-tilt';
 
 export default function Home() {
   const { user, isAuthenticated, signInWithGoogle, signInAsGuest } = useAuth();
@@ -31,8 +31,6 @@ export default function Home() {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
   const handleUploadSuccess = (docId: string) => {
-    // For full static hosting compatibility on GitHub Pages, route to /document/demo?doc=${docId}
-    // where DocumentView dynamically loads the uploaded document from client storage
     router.push(`/document/demo?doc=${docId}`);
   };
 
@@ -47,8 +45,11 @@ export default function Home() {
 
   if (!isAuthenticated) {
     return (
-      <div className="relative overflow-hidden min-h-[calc(100vh-4rem)] flex flex-col items-center justify-center p-6 md:p-12">
-        {/* Modern Ambient Gradient Background */}
+      <div className="relative overflow-hidden min-h-[calc(100vh-4rem)] flex flex-col items-center justify-center p-6 md:p-12 perspective-1000">
+        {/* Interactive 3D Canvas Background */}
+        <Hero3DCanvas />
+
+        {/* Ambient Glow Orbs */}
         <div className="absolute inset-0 -z-10 overflow-hidden pointer-events-none">
           <div className="absolute -top-40 left-1/2 -translate-x-1/2 w-[900px] h-[500px] bg-gradient-to-tr from-blue-600/20 via-indigo-500/20 to-purple-500/10 blur-[130px] rounded-full" />
           <div className="absolute top-1/2 -right-40 w-[600px] h-[400px] bg-gradient-to-br from-violet-500/15 to-transparent blur-[120px] rounded-full" />
@@ -61,8 +62,8 @@ export default function Home() {
             animate={{ opacity: 1, y: 0 }}
             className="flex items-center justify-center gap-2"
           >
-            <Badge variant="outline" className="px-3.5 py-1 text-xs font-semibold rounded-full border-blue-500/30 bg-blue-50/50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 gap-1.5 shadow-sm">
-              <Sparkles className="w-3.5 h-3.5" />
+            <Badge variant="outline" className="px-4 py-1.5 text-xs font-semibold rounded-full border-blue-500/30 bg-blue-50/50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 gap-1.5 shadow-sm glow-primary backdrop-blur-md">
+              <Sparkles className="w-3.5 h-3.5 animate-pulse" />
               Powered by Google AI Studio Free Tier & Gemini 1.5 Flash
             </Badge>
           </motion.div>
@@ -71,7 +72,7 @@ export default function Home() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="text-4xl sm:text-6xl lg:text-7xl font-black tracking-tight text-foreground leading-[1.15]"
+            className="text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight text-foreground leading-[1.15] font-display"
           >
             Smarter Contract Insights,{' '}
             <span className="bg-gradient-to-r from-blue-600 via-indigo-600 to-violet-600 dark:from-blue-400 dark:via-indigo-400 dark:to-violet-400 bg-clip-text text-transparent">
@@ -98,7 +99,7 @@ export default function Home() {
             <Button
               size="lg"
               onClick={signInWithGoogle}
-              className="w-full sm:w-auto h-12 px-8 rounded-xl font-semibold shadow-lg shadow-blue-500/20 bg-blue-600 hover:bg-blue-700 text-white transition-all transform hover:-translate-y-0.5 gap-2.5"
+              className="w-full sm:w-auto h-12 px-8 rounded-xl font-semibold shadow-lg shadow-blue-500/25 bg-blue-600 hover:bg-blue-700 text-white transition-all transform hover:-translate-y-1 active:translate-y-0 gap-2.5 glow-primary"
             >
               <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
                 <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
@@ -113,21 +114,21 @@ export default function Home() {
               size="lg"
               variant="outline"
               onClick={signInAsGuest}
-              className="w-full sm:w-auto h-12 px-8 rounded-xl font-semibold border-2 hover:bg-muted/60 transition-all gap-2"
+              className="w-full sm:w-auto h-12 px-8 rounded-xl font-semibold border-2 hover:bg-muted/60 transition-all transform hover:-translate-y-1 active:translate-y-0 gap-2 glass-3d"
             >
               Explore as Guest
               <ArrowRight className="w-4 h-4 text-muted-foreground" />
             </Button>
           </motion.div>
 
-          <div className="flex items-center justify-center gap-6 pt-6 text-xs text-muted-foreground">
+          <div className="flex flex-wrap items-center justify-center gap-6 pt-6 text-xs text-muted-foreground">
             <span className="flex items-center gap-1.5"><CheckCircle2 className="w-4 h-4 text-emerald-500" /> Client-side PII Scrubbing</span>
             <span className="flex items-center gap-1.5"><CheckCircle2 className="w-4 h-4 text-emerald-500" /> Free Forever</span>
             <span className="flex items-center gap-1.5"><CheckCircle2 className="w-4 h-4 text-emerald-500" /> Local Storage</span>
           </div>
         </div>
 
-        {/* Feature Grid */}
+        {/* Feature Grid with 3D Tilt Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl w-full">
           {[
             { 
@@ -172,20 +173,21 @@ export default function Home() {
               initial={{ opacity: 0, y: 25 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.15 + i * 0.08 }}
-              className="group relative p-7 rounded-2xl border bg-card/70 hover:bg-card hover:border-blue-500/40 hover:shadow-xl hover:shadow-blue-500/5 transition-all duration-300 flex flex-col justify-between"
             >
-              <div>
-                <div className="flex items-center justify-between mb-4">
-                  <div className="p-3 rounded-xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 group-hover:scale-105 transition-transform">
-                    <feature.icon className="w-6 h-6" />
+              <Card3DTilt className="p-7 h-full flex flex-col justify-between glass-3d">
+                <div>
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="p-3 rounded-xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 shadow-inner">
+                      <feature.icon className="w-6 h-6" />
+                    </div>
+                    <span className="text-[11px] font-semibold tracking-wider text-muted-foreground uppercase px-2.5 py-0.5 rounded-full bg-muted/60">
+                      {feature.badge}
+                    </span>
                   </div>
-                  <span className="text-[11px] font-semibold tracking-wider text-muted-foreground uppercase px-2.5 py-0.5 rounded-full bg-muted/60">
-                    {feature.badge}
-                  </span>
+                  <h3 className="text-lg font-bold mb-2 tracking-tight font-display">{feature.title}</h3>
+                  <p className="text-sm text-muted-foreground leading-relaxed">{feature.desc}</p>
                 </div>
-                <h3 className="text-lg font-bold mb-2 tracking-tight">{feature.title}</h3>
-                <p className="text-sm text-muted-foreground leading-relaxed">{feature.desc}</p>
-              </div>
+              </Card3DTilt>
             </motion.div>
           ))}
         </div>
@@ -214,7 +216,7 @@ export default function Home() {
           {/* Header Banner */}
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b pb-6">
             <div>
-              <h1 className="text-3xl font-extrabold tracking-tight">Legal Workbench Dashboard</h1>
+              <h1 className="text-3xl font-extrabold tracking-tight font-display">Legal Workbench Dashboard</h1>
               <p className="text-sm text-muted-foreground mt-1">
                 Welcome back, {user?.displayName || 'Counsel'}. Upload a contract to begin automated clause risk assessment.
               </p>
@@ -224,7 +226,7 @@ export default function Home() {
               variant="outline"
               size="sm"
               onClick={() => router.push('/document/demo')}
-              className="gap-2 rounded-xl font-medium border-blue-500/30 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950/30"
+              className="gap-2 rounded-xl font-medium border-blue-500/30 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950/30 shadow-sm"
             >
               <FileSearch className="w-4 h-4" />
               Open Sample Contract
@@ -245,30 +247,25 @@ export default function Home() {
           <div className="pt-4 space-y-4">
             <h2 className="text-lg font-semibold tracking-tight">Sample & Recent Analyses</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-              <div 
-                onClick={() => router.push('/document/demo')}
-                className="p-5 rounded-2xl border bg-card hover:border-blue-500/40 hover:shadow-md cursor-pointer transition-all space-y-3 group"
+              <Card3DTilt 
+                className="p-5 cursor-pointer space-y-3 glass-3d"
               >
-                <div className="flex items-center justify-between">
-                  <Badge variant="secondary" className="bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300">
-                    Elevated Risk (68/100)
-                  </Badge>
-                  <ArrowRight className="w-4 h-4 text-muted-foreground group-hover:translate-x-1 transition-transform" />
+                <div onClick={() => router.push('/document/demo')} className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <Badge variant="outline" className="text-xs bg-emerald-500/10 text-emerald-600 border-emerald-500/30">
+                      Sample Lease
+                    </Badge>
+                    <span className="text-xs text-muted-foreground">Demo Doc</span>
+                  </div>
+                  <h3 className="font-bold text-base line-clamp-1 font-display">Master Services Agreement (Sample Draft)</h3>
+                  <p className="text-xs text-muted-foreground line-clamp-2">
+                    Commercial consulting contract with indemnification and termination clauses.
+                  </p>
+                  <div className="flex items-center text-xs font-semibold text-blue-600 dark:text-blue-400 pt-1">
+                    Examine Risk Profile <ArrowRight className="w-3.5 h-3.5 ml-1" />
+                  </div>
                 </div>
-                <h3 className="font-bold text-base group-hover:text-blue-600 transition-colors">Commercial Master Services Agreement.pdf</h3>
-                <p className="text-xs text-muted-foreground line-clamp-2">
-                  Contains uncapped indemnification, 10-day termination clause, and standard Delaware governing law.
-                </p>
-                <div className="text-[11px] text-muted-foreground pt-2 border-t flex justify-between">
-                  <span>8 Clauses</span>
-                  <span>Sample Document</span>
-                </div>
-              </div>
-
-              <div className="p-5 rounded-2xl border border-dashed flex flex-col items-center justify-center text-center text-muted-foreground gap-2 min-h-[160px]">
-                <FileText className="w-8 h-8 opacity-40" />
-                <span className="text-sm font-medium">Upload contracts above to review your private files</span>
-              </div>
+              </Card3DTilt>
             </div>
           </div>
         </div>
