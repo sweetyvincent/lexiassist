@@ -18,13 +18,13 @@ LexiAssist directly implements all potential use cases outlined in the challenge
 
 | Problem Statement Use Case | LexiAssist Feature & Implementation |
 | :--- | :--- |
-| **1. Simplifying Complex Legal Documents** | **Multi-Tier Reading Level Summarizer** (Plain English, Standard Business, Attorney View) with integrated **Client-Side Text-to-Speech (TTS)** audio narration. |
-| **2. Comparing Contracts & Policies** | **Side-by-Side Comparison Matrix** with an instant **"Load Standard Benchmark Comparison"** tool, calculating category risk score deltas (+12 risk points, etc.) and clause deviations. |
-| **3. Highlighting Clauses, Obligations & Risks** | **Multi-Axis Risk Radar** & **Rights vs. Obligations Breakdown** highlighting key rights, core deadlines, and explicit **Critical Discrepancies & Inconsistencies Warnings**. |
-| **4. Answering Document Questions** | **Cited RAG Q&A Chat (`ChatTab`)** featuring page-referenced citations and 1-click suggested legal questions. |
-| **5. Options & Next Steps Navigator** | **Interactive Action Navigator** guiding users through Option A (*Accept Standard Terms*), Option B (*Request Clause Edits*), and Option C (*Escalate to Attorney*). |
-| **6. Generating Checklists & Actionable Outputs** | **Interactive Action Items Checklist** with progress tracking and exportable Markdown/PDF briefing sheets in `BriefingTab`. |
-| **7. Preparing for Legal Professionals** | **Structured Attorney Briefing Sheet** featuring executive summaries, prioritized high-risk clauses, and recommended consultation questions. |
+| **1. Simplifying Complex Legal Documents** | **Multi-Tier Reading Level Summarizer** (Plain English, Standard Business, Attorney View), **Flesch-Kincaid Readability Score Improvement Card** (Grade 18.2 ➔ Grade 8.4), **Multi-Language Selector** (English, Spanish, French, German, Hindi), **Inline Jargon Glossary**, and **Text-to-Speech (TTS)** narration. |
+| **2. Comparing Contracts & Policies** | **Side-by-Side Comparison Matrix** with **"Load Standard Benchmark Comparison"** tool, calculating category risk score deltas, redline diff summarizer, and clause variance highlights. |
+| **3. Highlighting Clauses, Obligations & Risks** | **Multi-Axis Risk Radar Chart**, **Severity Breakdown (`HIGH`/`MEDIUM`/`LOW`)**, **Negotiation Counter-Clause Assistant** (1-click copy balanced clause wording), and explicit **Auto-Renewal & Liability Traps Highlighting**. |
+| **4. Answering Document Questions** | **Cited RAG Q&A Chat (`ChatTab`)** featuring exact page/clause reference citations, 1-click suggested legal questions, and **98% Grounding Confidence Indicators**. |
+| **5. Options & Next Steps Navigator** | **Interactive Action Navigator** guiding users through Option A (*Accept Standard Terms*), Option B (*Propose Balanced Edits*), and Option C (*Escalate to Legal Counsel*). |
+| **6. Generating Checklists & Actionable Outputs** | **Contract Obligation & Deadline Checklist** with progress tracking, exportable Markdown/PDF briefing sheets, and **`.ics` Calendar File Export** for Google/Outlook calendar sync. |
+| **7. Preparing for Legal Professionals** | **Structured Attorney Briefing Sheet**, **Multi-Jurisdiction Selector** (Delaware, CA, NY, Federal US, UK, General Commercial), jurisdiction notices, and prepared questions for legal counsel. |
 
 ---
 
